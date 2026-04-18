@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Sistema de Inventario - Ubicaciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 12px;
+        }
+        .login-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            width: auto;
+        }
+        .login-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .logout-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            width: auto;
+        }
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .user-info {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: white;
+        }
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            background: white;
+        }
+        .tab.hidden-tab {
+            display: none;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .search-section {
+            margin-bottom: 20px;
+        }
+        .search-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+        .search-section input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .search-section input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .result-card {
+            margin-top: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-header {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            background: white;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #666;
+        }
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+        .info-value.highlight {
+            color: #4CAF50;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .edit-section {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .edit-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+        .edit-field {
+            margin-bottom: 10px;
+        }
+        .edit-field label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .edit-field input, .edit-field select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .btn-save {
+            background: #4CAF50;
+            margin-top: 10px;
+        }
+        .btn-export {
+            background: #2196F3;
+            margin-top: 10px;
+        }
+        .btn-danger {
+            background: #f44336;
+            margin-top: 10px;
+        }
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .warning-message {
+            background: #fff3e0;
+            color: #e65100;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .file-input {
+            margin-bottom: 20px;
+        }
+        .file-input label {
+            display: block;
+            padding: 12px;
+            background: #e3f2fd;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px dashed #667eea;
+        }
+        .stats {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .stats span {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .preview {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .footer {
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+            color: #999;
+            font-size: 12px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        .dashboard-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .dashboard-section h3 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 16px;
+        }
+        .product-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 12px;
+        }
+        .product-code {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 80px;
+        }
+        .product-stock {
+            color: #f44336;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: right;
+        }
+        .product-desc {
+            flex: 1;
+            margin: 0 10px;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .btn-small {
+            background: #4CAF50;
+            padding: 4px 10px;
+            font-size: 10px;
+            border-radius: 5px;
+            width: auto;
+        }
+        .search-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .search-row input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .search-row button {
+            width: auto;
+            padding: 15px 20px;
+        }
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .info-badge {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .warning-badge {
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            text-align: center;
+            color: #e65100;
+        }
+        @media (max-width: 480px) {
+            .container { border-radius: 10px; }
+            .header h1 { font-size: 20px; }
+            .tab { font-size: 11px; padding: 10px 4px; }
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .user-info { font-size: 9px; }
+            .login-btn, .logout-btn { font-size: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="user-info" id="userInfoDisplay">👤 Visitante</div>
+            <button class="login-btn" id="loginBtn" onclick="showLoginModal()">🔐 Iniciar Sesión</button>
+            <button class="logout-btn hidden" id="logoutBtn" onclick="logout()">🚪 Cerrar Sesión</button>
+            <h1>📦 Sistema de Inventario</h1>
+            <p>Gestión de ubicaciones de productos</p>
+        </div>
+
+        <div class="tabs" id="tabsContainer">
+            <div class="tab active" onclick="switchTab('search')">🔍 Buscar</div>
+            <div class="tab" onclick="switchTab('dashboard')">📊 Dashboard</div>
+            <div class="tab hidden-tab" id="tabEdit" onclick="switchTab('edit')">✏️ Editar</div>
+            <div class="tab hidden-tab" id="tabUpload" onclick="switchTab('upload')">📂 Cargar</div>
+            <div class="tab hidden-tab" id="tabUsers" onclick="switchTab('users')">👥 Usuarios</div>
+        </div>
+
+        <!-- Pestaña Dashboard -->
+        <div id="tab-dashboard" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value" id="totalProducts">0</div><div class="stat-label">Total Productos</div></div>
+                <div class="stat-card"><div class="stat-value" id="locatedProducts">0</div><div class="stat-label">Con Ubicación</div></div>
+                <div class="stat-card"><div class="stat-value" id="noLocationProducts">0</div><div class="stat-label">Sin Ubicación</div></div>
+                <div class="stat-card"><div class="stat-value" id="lowStockProducts">0</div><div class="stat-label">Stock Bajo (&lt;10)</div></div>
+                <div class="stat-card"><div class="stat-value" id="zeroStockProducts">0</div><div class="stat-label">Sin Stock</div></div>
+                <div class="stat-card"><div class="stat-value" id="ubicacionCompleta">0%</div><div class="stat-label">% Ubicado</div></div>
+            </div>
+            <div class="dashboard-section"><h3>⚠️ Top 10 Productos con Stock Bajo</h3><div id="lowStockList" class="product-list"></div></div>
+            <div class="dashboard-section"><h3>📍 Productos Sin Ubicación</h3><div id="noLocationList" class="product-list"></div></div>
+            <div class="dashboard-section"><h3>🔥 Top 10 Más Buscados</h3><div id="topSearchedList" class="product-list"></div></div>
+        </div>
+
+        <!-- Pestaña de Búsqueda -->
+        <div id="tab-search" class="tab-content active">
+            <div class="search-section">
+                <label>🔎 Buscar por CÓDIGO:</label>
+                <div class="search-row">
+                    <input type="text" id="searchId" placeholder="Ej: 101001, 102001P, N103021" autocomplete="off">
+                    <button onclick="searchProduct()">Consultar</button>
+                </div>
+            </div>
+            <div class="search-section">
+                <label>🔎 Buscar por DESCRIPCIÓN:</label>
+                <div class="search-row">
+                    <input type="text" id="searchDesc" placeholder="Ej: MOTOR, CULATA, ALTERNADOR" autocomplete="off">
+                    <button onclick="searchByDescription()">Buscar</button>
+                </div>
+            </div>
+            <div id="searchResult"></div>
+            <div id="searchDescResult"></div>
+        </div>
+
+        <!-- Pestaña de Edición -->
+        <div id="tab-edit" class="tab-content">
+            <div id="editContent">
+                <div class="info-badge" id="userInfoBadge"></div>
+                <div class="search-section">
+                    <label>✏️ Seleccionar producto por CÓDIGO:</label>
+                    <input type="text" id="editId" placeholder="Ej: 101001, 102001P" autocomplete="off">
+                    <button onclick="loadProductForEdit()">Cargar producto</button>
+                </div>
+                <div id="editForm" class="hidden">
+                    <div class="result-card">
+                        <div class="result-header" id="editProductTitle">Producto: -</div>
+                        <div class="edit-section">
+                            <h3>📌 Configurar Ubicación</h3>
+                            <div class="edit-field"><label>🏢 PISO:</label><input type="text" id="editPiso" placeholder="Ej: 1, 2, PB"></div>
+                            <div class="edit-field"><label>📍 PASILLO:</label><input type="text" id="editPasillo" placeholder="Ej: A-12, B-05"></div>
+                            <div class="edit-field">
+                                <label>📚 NIVEL:</label>
+                                <select id="editNivel">
+                                    <option value="">Seleccionar nivel</option>
+                                    <option value="1">Nivel 1 (Bajo)</option>
+                                    <option value="2">Nivel 2 (Medio)</option>
+                                    <option value="3">Nivel 3 (Alto)</option>
+                                    <option value="4">Nivel 4 (Superior)</option>
+                                    <option value="Suelo">Suelo / Piso</option>
+                                </select>
+                            </div>
+                            <button class="btn-save" onclick="saveLocation()">💾 Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pestaña de Carga -->
+        <div id="tab-upload" class="tab-content">
+            <div id="uploadContent">
+                <div class="info-badge" id="uploadUserBadge"></div>
+                <div class="warning-badge" id="updateWarning"></div>
+                <div class="stats">
+                    <div>📊 Productos: <span id="productCount">0</span></div>
+                    <div>📍 Con ubicación: <span id="locatedCount">0</span></div>
+                    <div>👤 Última actualización: <span id="lastUser">-</span></div>
+                    <div>📅 Fecha: <span id="lastDate">-</span></div>
+                </div>
+                <div class="file-input">
+                    <label for="excelFile">📂 Seleccionar archivo Excel<br><small>Columnas: A=Código, B=Descripción, C=Stock, E=PISO, F=PASILLO, G=NIVEL</small></label>
+                    <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" style="display:none" onchange="loadExcelFile(this.files[0])">
+                </div>
+                <button onclick="document.getElementById('excelFile').click()">📁 Cargar Inventario</button>
+                <button class="btn-export" onclick="exportToExcel()">📎 Exportar a Excel</button>
+                <button class="btn-danger" onclick="showClearDatabaseDialog()">🗑️ Limpiar Datos</button>
+                <div id="uploadResult"></div>
+                <div id="preview" class="preview hidden"></div>
+            </div>
+        </div>
+
+        <!-- Pestaña de Usuarios -->
+        <div id="tab-users" class="tab-content">
+            <div id="usersContent">
+                <div class="info-badge" id="usersUserBadge"></div>
+                <div class="stats"><div>👥 Usuarios: <span id="userCount">0</span></div></div>
+                <div class="edit-section">
+                    <h3>➕ Crear Usuario</h3>
+                    <div class="edit-field"><label>👤 Usuario:</label><input type="text" id="newUsername" placeholder="ej: d.marin"></div>
+                    <div class="edit-field"><label>🔑 Contraseña:</label><input type="password" id="newPassword" placeholder="Mínimo 4 caracteres"></div>
+                    <div class="edit-field"><label>👑 Rol:</label><select id="newRole"><option value="editor">Editor (edita ubicaciones)</option><option value="admin">Administrador (acceso total)</option></select></div>
+                    <button onclick="createUser()">➕ Crear</button>
+                </div>
+                <div class="edit-section"><h3>📋 Lista de Usuarios</h3><div id="usersList" style="max-height:250px;overflow-y:auto"></div></div>
+                <div class="edit-section">
+                    <h3>🔐 Cambiar Contraseña</h3>
+                    <div class="edit-field"><label>👤 Usuario:</label><input type="text" id="changeUser" placeholder="Nombre de usuario"></div>
+                    <div class="edit-field"><label>🔑 Nueva contraseña:</label><input type="password" id="changePassword" placeholder="Nueva contraseña"></div>
+                    <button onclick="changePassword()">🔄 Cambiar</button>
+                </div>
+                <div class="edit-section">
+                    <h3>🗑️ Eliminar Usuario</h3>
+                    <div class="edit-field"><label>👤 Usuario:</label><input type="text" id="deleteUser" placeholder="Nombre de usuario"></div>
+                    <button class="btn-danger" onclick="deleteUser()">🗑️ Eliminar</button>
+                </div>
+                <div id="usersResult"></div>
+            </div>
+        </div>
+
+        <div class="footer"><p>Última actualización: <span id="lastUpdate">No hay datos</span></p></div>
+    </div>
+
+    <!-- Modal de Login -->
+    <div id="loginModal" class="login-overlay" style="display: none;">
+        <div class="login-box">
+            <h3>🔐 Iniciar Sesión</h3>
+            <input type="text" id="loginUsername" placeholder="Usuario (ej: admin)" autocomplete="off">
+            <input type="password" id="loginPassword" placeholder="Contraseña">
+            <button onclick="attemptLogin()">Ingresar</button>
+            <button onclick="closeLoginModal()" style="background:#999; margin-top:10px;">Cancelar</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script>
+        // ============ CONFIGURACIÓN ============
+        const USERS_KEY = "inventario_usuarios";
+        const STORAGE_KEY = "inventario_ubicaciones";
+        const METADATA_KEY = "inventario_metadata";
+        const SEARCH_HISTORY_KEY = "search_history";
+        const SESSION_KEY = "inventario_session";
+
+        const DEFAULT_ADMIN = {
+            username: "admin",
+            password: "admin123",
+            role: "admin",
+            createdAt: new Date().toISOString()
+        };
+
+        // ============ VARIABLES GLOBALES ============
+        let productosDB = {};
+        let currentEditProduct = null;
+        let currentUser = null;
+        let currentUserRole = null;
+
+        // ============ FUNCIONES DE SESIÓN ============
+        function checkSession() {
+            const savedSession = localStorage.getItem(SESSION_KEY);
+            if (savedSession) {
+                try {
+                    const session = JSON.parse(savedSession);
+                    const users = getUsers();
+                    const user = users[session.username];
+                    if (user && user.password === session.passwordHash) {
+                        currentUser = session.username;
+                        currentUserRole = user.role;
+                        updateUIForLoggedUser();
+                        return true;
+                    }
+                } catch(e) {}
+            }
+            closeLoginModal();
+            updateUIForGuest();
+            return false;
+        }
+
+        function saveSession(username, passwordHash) {
+            localStorage.setItem(SESSION_KEY, JSON.stringify({
+                username: username,
+                passwordHash: passwordHash,
+                loginTime: new Date().toISOString()
+            }));
+        }
+
+        function clearSession() {
+            localStorage.removeItem(SESSION_KEY);
+            currentUser = null;
+            currentUserRole = null;
+            updateUIForGuest();
+            closeLoginModal();
+        }
+
+        function logout() {
+            clearSession();
+            showMessage('searchResult', '✅ Sesión cerrada correctamente', 'success');
+            switchTab('search');
+        }
+
+        function showLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function attemptLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!username || !password) {
+                alert('Ingrese usuario y contraseña');
+                return;
+            }
+            
+            const users = getUsers();
+            const user = users[username];
+            
+            if (user && user.password === password) {
+                currentUser = username;
+                currentUserRole = user.role;
+                saveSession(username, password);
+                updateUIForLoggedUser();
+                closeLoginModal();
+                showMessage('searchResult', `✅ Bienvenido ${username} (${user.role === 'admin' ? 'Administrador' : 'Editor'})`, 'success');
+            } else {
+                alert('❌ Usuario o contraseña incorrectos');
+            }
+        }
+
+        function updateUIForLoggedUser() {
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userInfoDisplay = document.getElementById('userInfoDisplay');
+            const tabEdit = document.getElementById('tabEdit');
+            const tabUpload = document.getElementById('tabUpload');
+            const tabUsers = document.getElementById('tabUsers');
+            const userInfoBadge = document.getElementById('userInfoBadge');
+            const uploadUserBadge = document.getElementById('uploadUserBadge');
+            const usersUserBadge = document.getElementById('usersUserBadge');
+            
+            if (loginBtn) loginBtn.classList.add('hidden');
+            if (logoutBtn) logoutBtn.classList.remove('hidden');
+            if (userInfoDisplay) userInfoDisplay.innerHTML = `👤 ${currentUser} (${currentUserRole === 'admin' ? 'Admin' : 'Editor'})`;
+            if (tabEdit) tabEdit.classList.remove('hidden-tab');
+            if (tabUpload) tabUpload.classList.remove('hidden-tab');
+            if (tabUsers) tabUsers.classList.remove('hidden-tab');
+            if (userInfoBadge) userInfoBadge.innerHTML = `👤 Usuario: ${currentUser} | Rol: ${currentUserRole === 'admin' ? 'Administrador' : 'Editor'} | Modo Edición activo`;
+            if (uploadUserBadge) uploadUserBadge.innerHTML = `👤 Usuario: ${currentUser} (${currentUserRole === 'admin' ? 'Administrador' : 'Editor'}) | Modo Administración activo`;
+            if (usersUserBadge) usersUserBadge.innerHTML = `👤 Usuario: ${currentUser} (Administrador) | Gestión de Usuarios`;
+            
+            if (currentUserRole === 'admin') updateUsersList();
+        }
+
+        function updateUIForGuest() {
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userInfoDisplay = document.getElementById('userInfoDisplay');
+            const tabEdit = document.getElementById('tabEdit');
+            const tabUpload = document.getElementById('tabUpload');
+            const tabUsers = document.getElementById('tabUsers');
+            
+            if (loginBtn) loginBtn.classList.remove('hidden');
+            if (logoutBtn) logoutBtn.classList.add('hidden');
+            if (userInfoDisplay) userInfoDisplay.innerHTML = '👤 Visitante';
+            if (tabEdit) tabEdit.classList.add('hidden-tab');
+            if (tabUpload) tabUpload.classList.add('hidden-tab');
+            if (tabUsers) tabUsers.classList.add('hidden-tab');
+            
+            const activeTab = document.querySelector('.tab-content.active');
+            if (activeTab && (activeTab.id === 'tab-edit' || activeTab.id === 'tab-upload' || activeTab.id === 'tab-users')) {
+                switchTab('search');
+            }
+        }
+
+        // ============ FUNCIONES DE USUARIOS ============
+        function getUsers() {
+            const saved = localStorage.getItem(USERS_KEY);
+            if (saved) return JSON.parse(saved);
+            const defaultUsers = { admin: DEFAULT_ADMIN };
+            localStorage.setItem(USERS_KEY, JSON.stringify(defaultUsers));
+            return defaultUsers;
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            if (currentUserRole === 'admin') updateUsersList();
+        }
+
+        function createUser() {
+            if (currentUserRole !== 'admin') {
+                showMessage('usersResult', '❌ Solo administrador puede crear usuarios', 'error');
+                return;
+            }
+            const username = document.getElementById('newUsername').value.trim();
+            const password = document.getElementById('newPassword').value.trim();
+            const role = document.getElementById('newRole').value;
+            if (!username || !password) {
+                showMessage('usersResult', '❌ Complete todos los campos', 'error');
+                return;
+            }
+            if (password.length < 4) {
+                showMessage('usersResult', '❌ La contraseña debe tener al menos 4 caracteres', 'error');
+                return;
+            }
+            const users = getUsers();
+            if (users[username]) {
+                showMessage('usersResult', '❌ El usuario ya existe', 'error');
+                return;
+            }
+            users[username] = { username: username, password: password, role: role, createdAt: new Date().toISOString() };
+            saveUsers(users);
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newPassword').value = '';
+            showMessage('usersResult', `✅ Usuario "${username}" creado con rol: ${role}`, 'success');
+        }
+
+        function updateUsersList() {
+            const users = getUsers();
+            const userCountSpan = document.getElementById('userCount');
+            if (userCountSpan) userCountSpan.innerText = Object.keys(users).length;
+            const listDiv = document.getElementById('usersList');
+            if (!listDiv) return;
+            listDiv.innerHTML = '';
+            for (let [username, userData] of Object.entries(users)) {
+                const userCard = document.createElement('div');
+                userCard.style.cssText = 'background: #f5f5f5; padding: 10px; margin-bottom: 10px; border-radius: 8px;';
+                userCard.innerHTML = `<div><strong>👤 ${username}</strong></div><div style="font-size: 12px; color: #666;">Rol: ${userData.role === 'admin' ? '👑 Administrador' : '✏️ Editor'}</div><div style="font-size: 10px; color: #999;">Creado: ${new Date(userData.createdAt).toLocaleDateString()}</div>`;
+                listDiv.appendChild(userCard);
+            }
+        }
+
+        function changePassword() {
+            if (currentUserRole !== 'admin') {
+                showMessage('usersResult', '❌ Solo administrador puede cambiar contraseñas', 'error');
+                return;
+            }
+            const username = document.getElementById('changeUser').value.trim();
+            const newPassword = document.getElementById('changePassword').value.trim();
+            if (!username || !newPassword) {
+                showMessage('usersResult', '❌ Complete los campos', 'error');
+                return;
+            }
+            if (newPassword.length < 4) {
+                showMessage('usersResult', '❌ Mínimo 4 caracteres', 'error');
+                return;
+            }
+            const users = getUsers();
+            if (!users[username]) {
+                showMessage('usersResult', '❌ Usuario no existe', 'error');
+                return;
+            }
+            users[username].password = newPassword;
+            saveUsers(users);
+            document.getElementById('changeUser').value = '';
+            document.getElementById('changePassword').value = '';
+            showMessage('usersResult', `✅ Contraseña de "${username}" actualizada`, 'success');
+        }
+
+        function deleteUser() {
+            if (currentUserRole !== 'admin') {
+                showMessage('usersResult', '❌ Solo administrador puede eliminar usuarios', 'error');
+                return;
+            }
+            const username = document.getElementById('deleteUser').value.trim();
+            if (!username) {
+                showMessage('usersResult', '❌ Ingrese un usuario', 'error');
+                return;
+            }
+            if (username === 'admin') {
+                showMessage('usersResult', '❌ No se puede eliminar al administrador principal', 'error');
+                return;
+            }
+            const users = getUsers();
+            if (!users[username]) {
+                showMessage('usersResult', '❌ Usuario no existe', 'error');
+                return;
+            }
+            if (confirm(`¿Eliminar usuario "${username}"?`)) {
+                delete users[username];
+                saveUsers(users);
+                document.getElementById('deleteUser').value = '';
+                showMessage('usersResult', `✅ Usuario "${username}" eliminado`, 'success');
+            }
+        }
+
+        // ============ FUNCIONES DE METADATOS ============
+        function getMetadata() {
+            const saved = localStorage.getItem(METADATA_KEY);
+            if (saved) return JSON.parse(saved);
+            return { lastUser: "", lastDate: "", lastWeek: "" };
+        }
+
+        function saveMetadata(user) {
+            const metadata = { lastUser: user, lastDate: new Date().toLocaleString(), lastWeek: getWeekNumber() };
+            localStorage.setItem(METADATA_KEY, JSON.stringify(metadata));
+            updateMetadataDisplay();
+        }
+
+        function getWeekNumber() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 1);
+            const diff = now - start;
+            return Math.ceil(diff / 604800000);
+        }
+
+        function checkWeeklyUpdate() {
+            const metadata = getMetadata();
+            const currentWeek = getWeekNumber();
+            const warningDiv = document.getElementById('updateWarning');
+            if (warningDiv) {
+                if (!metadata.lastDate) warningDiv.innerHTML = '⚠️ Base de datos no actualizada. Cargue el inventario. ⚠️';
+                else if (metadata.lastWeek !== currentWeek) warningDiv.innerHTML = `⚠️ ¡ATENCIÓN! Última actualización: ${metadata.lastDate} (${metadata.lastUser}). Actualice la base de datos. ⚠️`;
+                else warningDiv.innerHTML = `✅ Actualizado por: ${metadata.lastUser} el ${metadata.lastDate}`;
+            }
+        }
+
+        function updateMetadataDisplay() {
+            const metadata = getMetadata();
+            const lastUserSpan = document.getElementById('lastUser');
+            const lastDateSpan = document.getElementById('lastDate');
+            const lastUpdateSpan = document.getElementById('lastUpdate');
+            if (lastUserSpan) lastUserSpan.innerText = metadata.lastUser || '-';
+            if (lastDateSpan) lastDateSpan.innerText = metadata.lastDate || '-';
+            if (lastUpdateSpan) lastUpdateSpan.innerText = metadata.lastDate || 'No hay datos';
+        }
+
+        // ============ FUNCIONES DE UBICACIÓN ============
+        function loadSavedLocations() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const ubicaciones = JSON.parse(saved);
+                for (let codigo in ubicaciones) {
+                    if (productosDB[codigo]) productosDB[codigo].ubicacion = ubicaciones[codigo];
+                }
+            }
+            updateLocatedCount();
+        }
+
+        function updateLocatedCount() {
+            let count = 0;
+            for (let cod in productosDB) {
+                const u = productosDB[cod].ubicacion;
+                if (u && (u.piso || u.pasillo || u.nivel)) count++;
+            }
+            const locatedCountSpan = document.getElementById('locatedCount');
+            if (locatedCountSpan) locatedCountSpan.innerText = count;
+        }
+
+        function saveLocationToStorage(codigo, ubicacion) {
+            const saved = localStorage.getItem(STORAGE_KEY) || '{}';
+            const ubicaciones = JSON.parse(saved);
+            ubicaciones[codigo] = ubicacion;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(ubicaciones));
+        }
+
+        // ============ DASHBOARD ============
+        function updateDashboard() {
+            const total = Object.keys(productosDB).length;
+            let conUbicacion = 0, sinUbicacion = 0, stockBajo = 0, zeroStock = 0;
+            let productosArray = [];
+            
+            for (let cod in productosDB) {
+                const p = productosDB[cod];
+                const u = p.ubicacion;
+                const tieneUbic = (u && (u.piso || u.pasillo || u.nivel));
+                if (tieneUbic) conUbicacion++;
+                else sinUbicacion++;
+                if (p.stock === 0) zeroStock++;
+                else if (p.stock < 10) stockBajo++;
+                productosArray.push(p);
+            }
+            
+            const totalProductsSpan = document.getElementById('totalProducts');
+            const locatedProductsSpan = document.getElementById('locatedProducts');
+            const noLocationProductsSpan = document.getElementById('noLocationProducts');
+            const lowStockProductsSpan = document.getElementById('lowStockProducts');
+            const zeroStockProductsSpan = document.getElementById('zeroStockProducts');
+            const ubicacionCompletaSpan = document.getElementById('ubicacionCompleta');
+            
+            if (totalProductsSpan) totalProductsSpan.innerText = total;
+            if (locatedProductsSpan) locatedProductsSpan.innerText = conUbicacion;
+            if (noLocationProductsSpan) noLocationProductsSpan.innerText = sinUbicacion;
+            if (lowStockProductsSpan) lowStockProductsSpan.innerText = stockBajo;
+            if (zeroStockProductsSpan) zeroStockProductsSpan.innerText = zeroStock;
+            if (ubicacionCompletaSpan) ubicacionCompletaSpan.innerText = total > 0 ? Math.round((conUbicacion/total)*100) + '%' : '0%';
+            
+            const lowStock = productosArray.filter(p => p.stock > 0 && p.stock < 10).sort((a,b) => a.stock - b.stock).slice(0,10);
+            const lowStockList = document.getElementById('lowStockList');
+            if (lowStockList) lowStockList.innerHTML = lowStock.map(p => `<div class="product-item"><span class="product-code">${p.codigo}</span><span class="product-desc">${p.descripcion.substring(0,40)}...</span><span class="product-stock">${p.stock} und</span></div>`).join('');
+            
+            const noLocation = productosArray.filter(p => { const u = p.ubicacion; return !(u && (u.piso || u.pasillo || u.nivel)); }).slice(0,10);
+            const noLocationList = document.getElementById('noLocationList');
+            if (noLocationList) noLocationList.innerHTML = noLocation.map(p => `<div class="product-item"><span class="product-code">${p.codigo}</span><span class="product-desc">${p.descripcion.substring(0,40)}...</span>${currentUserRole ? `<button class="btn-small" onclick="quickEditLocation('${p.codigo}')">📍 Asignar</button>` : '<span style="font-size:10px;color:#999;">🔒 Login para editar</span>'}</div>`).join('');
+            
+            const history = JSON.parse(localStorage.getItem(SEARCH_HISTORY_KEY) || '[]');
+            const counts = {};
+            history.forEach(h => { counts[h.codigo] = (counts[h.codigo] || 0) + 1; });
+            const top = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0,10);
+            const topSearchedList = document.getElementById('topSearchedList');
+            if (topSearchedList) topSearchedList.innerHTML = top.map(([codigo, count]) => { const p = productosDB[codigo]; return `<div class="product-item" style="cursor:pointer" onclick="document.getElementById('searchId').value='${codigo}'; searchProduct(); switchTab('search')"><span class="product-code">${codigo}</span><span class="product-desc">${p ? p.descripcion.substring(0,40) : 'N/A'}...</span><span>🔍 ${count}</span></div>`; }).join('');
+        }
+
+        function quickEditLocation(codigo) {
+            if (!currentUserRole) { showLoginModal(); return; }
+            const editIdInput = document.getElementById('editId');
+            if (editIdInput) editIdInput.value = codigo;
+            switchTab('edit');
+            loadProductForEdit();
+        }
+
+        function saveSearchHistory(codigo) {
+            let history = JSON.parse(localStorage.getItem(SEARCH_HISTORY_KEY) || '[]');
+            history = history.filter(h => h.codigo !== codigo);
+            history.unshift({ codigo: codigo, fecha: new Date().toISOString() });
+            history = history.slice(0, 20);
+            localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(history));
+        }
+
+        // ============ LIMPIEZA ============
+        function showClearDatabaseDialog() {
+            if (currentUserRole !== 'admin') {
+                showMessage('uploadResult', '❌ Solo administrador puede limpiar la base de datos', 'error');
+                return;
+            }
+            const specialPassword = prompt("🔐 Ingrese la CLAVE ESPECIAL para LIMPIAR la base de datos:\n(Esta acción es irreversible)");
+            const CLEAR_PASSWORD = "clearDB2024";
+            if (specialPassword !== CLEAR_PASSWORD) {
+                if (specialPassword !== null) showMessage('uploadResult', '❌ Clave especial incorrecta', 'error');
+                return;
+            }
+            if (confirm("⚠️ ¿ESTÁS ABSOLUTAMENTE SEGURO? Esta acción eliminará TODOS los productos y ubicaciones guardadas. ⚠️")) clearDatabase();
+        }
+
+        function clearDatabase() {
+            if (currentUserRole !== 'admin') return;
+            productosDB = {};
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(METADATA_KEY);
+            localStorage.removeItem(SEARCH_HISTORY_KEY);
+            const productCountSpan = document.getElementById('productCount');
+            const locatedCountSpan = document.getElementById('locatedCount');
+            const lastUpdateSpan = document.getElementById('lastUpdate');
+            if (productCountSpan) productCountSpan.innerText = "0";
+            if (locatedCountSpan) locatedCountSpan.innerText = "0";
+            if (lastUpdateSpan) lastUpdateSpan.innerText = new Date().toLocaleString();
+            updateMetadataDisplay();
+            updateDashboard();
+            const previewDiv = document.getElementById('preview');
+            if (previewDiv) { previewDiv.classList.add('hidden'); previewDiv.innerHTML = ''; }
+            const searchResult = document.getElementById('searchResult');
+            const searchDescResult = document.getElementById('searchDescResult');
+            if (searchResult) searchResult.innerHTML = '';
+            if (searchDescResult) searchDescResult.innerHTML = '';
+            showMessage('uploadResult', '✅ Base de datos limpiada correctamente', 'success');
+        }
+
+        // ============ CARGA DE EXCEL ============
+        function loadExcelFile(file) {
+            if (!file) return;
+            if (currentUserRole !== 'admin') {
+                showMessage('uploadResult', '❌ Solo administrador puede cargar datos', 'error');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: "" });
+                    
+                    let nuevosProductos = {};
+                    let productosCargados = 0;
+                    
+                    for (let i = 0; i < jsonData.length; i++) {
+                        const row = jsonData[i];
+                        if (!row || row.length < 3) continue;
+                        let codigo = row[0] ? String(row[0]).trim() : '';
+                        if (!codigo || codigo === '' || codigo === 'CODIGO' || codigo === 'CÓDIGO' || codigo === 'A' || codigo === 'Referencia') continue;
+                        codigo = codigo.replace(/[\[\]]/g, '').trim();
+                        let descripcion = row[1] ? String(row[1]).trim() : '';
+                        let stock = parseFloat(row[2]) || 0;
+                        let piso = row[4] !== undefined && row[4] !== null && row[4] !== '' ? String(row[4]).trim() : '';
+                        let pasillo = row[5] !== undefined && row[5] !== null && row[5] !== '' ? String(row[5]).trim() : '';
+                        let nivel = row[6] !== undefined && row[6] !== null && row[6] !== '' ? String(row[6]).trim() : '';
+                        
+                        nuevosProductos[codigo] = { codigo: codigo, descripcion: descripcion, stock: stock, ubicacion: { piso, pasillo, nivel } };
+                        productosCargados++;
+                    }
+                    
+                    productosDB = nuevosProductos;
+                    saveMetadata(currentUser);
+                    
+                    let ubicados = 0;
+                    for (let cod in productosDB) {
+                        const u = productosDB[cod].ubicacion;
+                        if (u && (u.piso || u.pasillo || u.nivel)) ubicados++;
+                    }
+                    
+                    const productCountSpan = document.getElementById('productCount');
+                    const locatedCountSpan = document.getElementById('locatedCount');
+                    if (productCountSpan) productCountSpan.innerText = Object.keys(productosDB).length;
+                    if (locatedCountSpan) locatedCountSpan.innerText = ubicados;
+                    updateDashboard();
+                    
+                    const previewDiv = document.getElementById('preview');
+                    if (previewDiv) {
+                        const primeros = Object.values(productosDB).slice(0, 10);
+                        previewDiv.innerHTML = `<strong>📋 Vista previa:</strong><br>` + primeros.map(p => { const u = p.ubicacion; return `📌 ${p.codigo} - ${p.descripcion.substring(0,35)}... | 📍 P:${u.piso || '-'} Pa:${u.pasillo || '-'} N:${u.nivel || '-'}`; }).join('<br>');
+                        previewDiv.classList.remove('hidden');
+                    }
+                    checkWeeklyUpdate();
+                    showMessage('uploadResult', `✅ Se cargaron ${productosCargados} productos (${ubicados} con ubicación)`, 'success');
+                } catch (error) {
+                    showMessage('uploadResult', `❌ Error: ${error.message}`, 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // ============ EXPORTAR ============
+        function exportToExcel() {
+            if (Object.keys(productosDB).length === 0) {
+                showMessage('uploadResult', '⚠️ No hay datos', 'warning');
+                return;
+            }
+            const exportData = [['CODIGO', 'DESCRIPCION', 'STOCK', 'PISO', 'PASILLO', 'NIVEL']];
+            for (let cod in productosDB) {
+                const p = productosDB[cod];
+                const u = p.ubicacion;
+                exportData.push([p.codigo, p.descripcion, p.stock, u.piso || '', u.pasillo || '', u.nivel || '']);
+            }
+            const ws = XLSX.utils.aoa_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
+            XLSX.writeFile(wb, `inventario_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`);
+            showMessage('uploadResult', `✅ Exportado ${exportData.length - 1} productos`, 'success');
+        }
+
+        // ============ BÚSQUEDA ============
+        function searchProduct() {
+            let codigo = document.getElementById('searchId').value.trim();
+            const resultDiv = document.getElementById('searchResult');
+            const searchDescResult = document.getElementById('searchDescResult');
+            if (searchDescResult) searchDescResult.innerHTML = '';
+            
+            if (!codigo) { showMessage('searchResult', '❌ Ingrese un código', 'error'); return; }
+            if (Object.keys(productosDB).length === 0) { showMessage('searchResult', '⚠️ No hay datos cargados', 'warning'); return; }
+            
+            const codigoUpper = codigo.toUpperCase();
+            let product = productosDB[codigoUpper];
+            if (!product) {
+                for (let key in productosDB) {
+                    if (key.toUpperCase() === codigoUpper) { product = productosDB[key]; break; }
+                }
+            }
+            
+            if (!product) {
+                const similares = Object.keys(productosDB).filter(k => k.toUpperCase().includes(codigoUpper)).slice(0, 5);
+                let sugerencia = similares.length ? `<br><br>📌 ¿Quizás quisiste decir? ${similares.join(', ')}` : '';
+                showMessage('searchResult', `❌ No se encontró: ${codigo}${sugerencia}`, 'error');
+                return;
+            }
+            
+            saveSearchHistory(product.codigo);
+            updateDashboard();
+            
+            const u = product.ubicacion || {};
+            const stockStatus = product.stock === 0 ? 'SIN STOCK' : (product.stock < 10 ? 'STOCK BAJO' : 'STOCK NORMAL');
+            const stockColor = product.stock === 0 ? '#f44336' : (product.stock < 10 ? '#ff9800' : '#4CAF50');
+            
+            if (resultDiv) resultDiv.innerHTML = `<div class="result-card"><div class="result-header">📋 Información del Producto</div><div class="info-row"><span class="info-label">🏷️ Código:</span><span class="info-value">${product.codigo}</span></div><div class="info-row"><span class="info-label">📦 Descripción:</span><span class="info-value">${product.descripcion.substring(0,80)}${product.descripcion.length > 80 ? '...' : ''}</span></div><div class="info-row"><span class="info-label">📊 Stock:</span><span class="info-value" style="color:${stockColor};font-weight:bold;">${product.stock} (${stockStatus})</span></div><div class="info-row"><span class="info-label">🏢 PISO:</span><span class="info-value">${u.piso || 'No asignado'}</span></div><div class="info-row"><span class="info-label">📍 PASILLO:</span><span class="info-value">${u.pasillo || 'No asignado'}</span></div><div class="info-row"><span class="info-label">📚 NIVEL:</span><span class="info-value">${u.nivel || 'No asignado'}</span></div></div>`;
+        }
+
+        function searchByDescription() {
+            const texto = document.getElementById('searchDesc').value.trim().toUpperCase();
+            const resultDiv = document.getElementById('searchDescResult');
+            const searchResult = document.getElementById('searchResult');
+            if (searchResult) searchResult.innerHTML = '';
+            
+            if (!texto) { showMessage('searchDescResult', '❌ Ingrese texto', 'error'); return; }
+            if (Object.keys(productosDB).length === 0) { showMessage('searchDescResult', '⚠️ No hay datos cargados', 'warning'); return; }
+            
+            const resultados = [];
+            for (let cod in productosDB) {
+                if (productosDB[cod].descripcion.toUpperCase().includes(texto)) resultados.push(productosDB[cod]);
+            }
+            
+            if (resultados.length === 0) { showMessage('searchDescResult', `❌ No se encontró: ${texto}`, 'error'); return; }
+            
+            if (resultDiv) resultDiv.innerHTML = `<div class="result-card"><div class="result-header">🔍 ${resultados.length} resultados</div>${resultados.slice(0,20).map(p => { const u = p.ubicacion || {}; return `<div class="info-row" style="cursor:pointer" onclick="document.getElementById('searchId').value='${p.codigo}'; searchProduct();"><span class="info-label">${p.codigo}</span><span class="info-value">${p.descripcion.substring(0,50)}...</span><span class="info-value" style="font-size:11px">📍 ${u.piso || '-'}/${u.pasillo || '-'}/${u.nivel || '-'}</span></div>`; }).join('')}${resultados.length > 20 ? `<div class="info-row">... y ${resultados.length - 20} más</div>` : ''}</div>`;
+        }
+
+        // ============ EDICIÓN ============
+        function loadProductForEdit() {
+            if (!currentUserRole) { showLoginModal(); return; }
+            
+            let codigo = document.getElementById('editId').value.trim();
+            if (!codigo) { showMessage('editForm', '❌ Ingrese un código', 'error'); return; }
+            if (Object.keys(productosDB).length === 0) { showMessage('editForm', '⚠️ Primero cargue datos', 'error'); return; }
+            
+            const codigoUpper = codigo.toUpperCase();
+            let product = productosDB[codigoUpper];
+            if (!product) {
+                for (let key in productosDB) {
+                    if (key.toUpperCase() === codigoUpper) { product = productosDB[key]; break; }
+                }
+            }
+            if (!product) { showMessage('editForm', `❌ No se encontró: ${codigo}`, 'error'); document.getElementById('editForm').classList.add('hidden'); return; }
+            
+            currentEditProduct = product;
+            const u = product.ubicacion || {};
+            const editProductTitle = document.getElementById('editProductTitle');
+            const editPiso = document.getElementById('editPiso');
+            const editPasillo = document.getElementById('editPasillo');
+            const editNivel = document.getElementById('editNivel');
+            const editForm = document.getElementById('editForm');
+            
+            if (editProductTitle) editProductTitle.innerHTML = `✏️ Editando: ${product.codigo} - ${product.descripcion.substring(0,40)}...`;
+            if (editPiso) editPiso.value = u.piso || '';
+            if (editPasillo) editPasillo.value = u.pasillo || '';
+            if (editNivel) editNivel.value = u.nivel || '';
+            if (editForm) editForm.classList.remove('hidden');
+        }
+
+        function saveLocation() {
+            if (!currentUserRole) { showLoginModal(); return; }
+            if (!currentEditProduct) { alert('Primero cargue un producto'); return; }
+            const ubicacion = { piso: document.getElementById('editPiso').value.trim(), pasillo: document.getElementById('editPasillo').value.trim(), nivel: document.getElementById('editNivel').value };
+            currentEditProduct.ubicacion = ubicacion;
+            saveLocationToStorage(currentEditProduct.codigo, ubicacion);
+            updateLocatedCount();
+            updateDashboard();
+            showMessage('editForm', `✅ Ubicación guardada para ${currentEditProduct.codigo}`, 'success');
+        }
+
+        // ============ UTILITY ============
+        function showMessage(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const msgDiv = document.createElement('div');
+            msgDiv.className = type === 'error' ? 'error-message' : (type === 'warning' ? 'warning-message' : 'success-message');
+            msgDiv.innerHTML = message;
+            const oldMsg = container.querySelector('.error-message, .success-message, .warning-message');
+            if (oldMsg) oldMsg.remove();
+            container.appendChild(msgDiv);
+            setTimeout(() => { if (msgDiv.parentNode) msgDiv.remove(); }, 4000);
+        }
+
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            const tabsList = ['dashboard', 'search', 'edit', 'upload', 'users'];
+            const index = tabsList.indexOf(tab);
+            if (index !== -1) {
+                if (tabs[index]) tabs[index].classList.add('active');
+                const targetContent = document.getElementById(`tab-${tab}`);
+                if (targetContent) targetContent.classList.add('active');
+                if (tab === 'dashboard') updateDashboard();
+            }
+        }
+
+        // Event Listeners
+        const searchIdInput = document.getElementById('searchId');
+        const searchDescInput = document.getElementById('searchDesc');
+        if (searchIdInput) searchIdInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') searchProduct(); });
+        if (searchDescInput) searchDescInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') searchByDescription(); });
+
+        // Inicialización
+        function init() {
+            getUsers();
+            updateMetadataDisplay();
+            const savedLocations = localStorage.getItem(STORAGE_KEY);
+            if (savedLocations && Object.keys(productosDB).length > 0) loadSavedLocations();
+            updateDashboard();
+            closeLoginModal();
+            checkSession();
+        }
+
+        init();
+    </script>
+</body>
+</html>
