@@ -1879,18 +1879,29 @@
       }
 
       function switchTab(tab) {
-        const tabs = document.querySelectorAll(".tab");
-        const contents = document.querySelectorAll(".tab-content");
-        tabs.forEach((t) => t.classList.remove("active"));
-        contents.forEach((c) => c.classList.remove("active"));
-        const tabsList = ["dashboard", "search", "edit", "upload", "users"];
+        // Orden correcto de las pestañas según el HTML
+        const tabsList = ['search', 'dashboard', 'edit', 'upload', 'users'];
         const index = tabsList.indexOf(tab);
-        if (index !== -1) {
-          if (tabs[index]) tabs[index].classList.add("active");
-          const targetContent = document.getElementById(`tab-${tab}`);
-          if (targetContent) targetContent.classList.add("active");
-          if (tab === "dashboard") updateDashboard();
-        }
+    
+        if (index === -1) return;
+    
+        // Ocultar todos los contenidos
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(c => c.classList.remove('active'));
+    
+        // Mostrar el contenido seleccionado
+        const targetContent = document.getElementById(`tab-${tab}`);
+        if (targetContent) targetContent.classList.add('active');
+    
+        // Actualizar la clase active en las pestañas
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(t => t.classList.remove('active'));
+    
+        // Activar la pestaña correcta por su índice
+        if (tabs[index]) tabs[index].classList.add('active');
+    
+        // Si es dashboard, actualizar datos
+        if (tab === 'dashboard') updateDashboard();
       }
 
       // ============ PWA: Registrar Service Worker ============
