@@ -939,6 +939,9 @@
                 <button class="btn-save" onclick="saveLocation()">
                   💾 Guardar
                 </button>
+                <button class="btn-clear" onclick="clearEditForm()" style="background: #6c757d; margin-top: 10px;">
+                  🧹 Limpiar formulario
+                </button>
               </div>
             </div>
           </div>
@@ -2371,24 +2374,52 @@
           "EDITAR UBICACIÓN",
           `${currentUser} cambió ubicación de ${currentEditProduct.codigo} a P:${ubicacion.piso || "-"} Pa:${ubicacion.pasillo || "-"} N:${ubicacion.nivel || "-"}`,
         );
-        showMessage(
-          "editForm",
-          `✅ Ubicación guardada para ${currentEditProduct.codigo}`,
-          "success",
-        );
+        // Mostrar mensaje en un lugar que no se limpiará
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "success-message";
+        msgDiv.innerHTML = `✅ Ubicación guardada para ${currentEditProduct.codigo}`;
+        
+        // Usar el contenedor de edición pero fuera del área que se limpia
+        const editContent = document.getElementById("editContent");
+        const oldMsg = editContent.querySelector(".success-message, .error-message, .warning-message");
+        if (oldMsg) oldMsg.remove();
+        editContent.appendChild(msgDiv);
+        
+        // El mensaje desaparecerá después de 5 segundos
+        setTimeout(() => {
+          if (msgDiv.parentNode) msgDiv.remove();
+        }, 5000);
 
-        // === NUEVO: Volver al Dashboard si veníamos de allí ===
-        // Verificar si el producto se cargó desde el Dashboard
+        // Volver al Dashboard si veníamos de allí
         const fromDashboard = sessionStorage.getItem("fromDashboard") === "true";
         if (fromDashboard) {
           sessionStorage.removeItem("fromDashboard");
           setTimeout(() => {
             switchTab("dashboard");
-            updateDashboard(); // Actualizar nuevamente por seguridad
+            updateDashboard();
           }, 500);
         }
-      }
 
+        // === LIMPIEZA AUTOMÁTICA DEL FORMULARIO ===
+        setTimeout(() => {
+          document.getElementById("editId").value = "";
+          document.getElementById("editPiso").value = "";
+          document.getElementById("editPasillo").value = "";
+          document.getElementById("editNivel").value = "";
+          document.getElementById("editForm").classList.add("hidden");
+          currentEditProduct = null;
+        }, 100); // Limpia rápido pero el mensaje ya está fuera
+      }
+  
+      function clearEditForm() {
+        document.getElementById("editId").value = "";
+        document.getElementById("editPiso").value = "";
+        document.getElementById("editPasillo").value = "";
+        document.getElementById("editNivel").value = "";
+        document.getElementById("editForm").classList.add("hidden");
+        currentEditProduct = null;
+        showMessage("editForm", "🧹 Formulario limpiado", "success");
+      }
       // ============ UTILITY ============
       function showMessage(containerId, message, type) {
         const container = document.getElementById(containerId);
