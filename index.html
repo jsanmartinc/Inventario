@@ -381,7 +381,6 @@
         background: var(--badge-info-bg);
         text-align: center;
         border-radius: 10px;
-        cursor: pointer;
         border: 2px dashed #667eea;
         color: var(--text-primary);
       }
@@ -744,6 +743,37 @@
           vertical-align: middle;
         }
       }
+            .history-filters {
+        display: inline-block;
+        margin-right: 20px;
+        vertical-align: middle;
+      }
+
+      .history-actions {
+        display: inline-flex;
+        float: right;
+        gap: 10px;
+        vertical-align: middle;
+      }
+
+      /* Contenedor que los envuelve */
+      #historyContent {
+        overflow: auto;
+      }
+
+      /* En móvil se apilan */
+      @media (max-width: 768px) {
+        .history-filters {
+          display: block;
+          margin-bottom: 10px;
+        }
+        
+        .history-actions {
+          float: none;
+          display: flex;
+          justify-content: flex-start;
+        }
+      }
     </style>
   </head>
   <body>
@@ -751,10 +781,10 @@
       <div class="header">
         <div class="user-info" id="userInfoDisplay">👤 Visitante</div>
         <button class="login-btn" id="loginBtn" onclick="showLoginModal()">
-          🔐 Iniciar Sesión
+         Iniciar Sesión
         </button>
         <button class="logout-btn hidden" id="logoutBtn" onclick="logout()">
-          🚪 Cerrar Sesión
+         Cerrar Sesión
         </button>
         <h1>📦 Sistema de Inventario</h1>
         <p>Gestión de ubicaciones de productos</p>
@@ -764,7 +794,7 @@
         <div class="tab active" onclick="switchTab('search')">🔍 Buscar</div>
         <div class="tab" onclick="switchTab('dashboard')">📊 Dashboard</div>
         <div class="tab hidden-tab" id="tabEdit" onclick="switchTab('edit')">
-          ✏️ Editar
+          ✏️ Editar Ubicación
         </div>
         <div
           class="tab hidden-tab"
@@ -916,7 +946,6 @@
       <div id="tab-upload" class="tab-content">
         <div id="uploadContent">
           <div class="info-badge" id="uploadUserBadge"></div>
-          <div class="warning-badge" id="updateWarning"></div>
           <div class="stats">
             <div>📊 Productos: <span id="productCount">0</span></div>
             <div>📍 Con ubicación: <span id="locatedCount">0</span></div>
@@ -926,8 +955,8 @@
           <div class="file-input">
             <label for="excelFile"
               >📂 Seleccionar archivo Excel<br /><small
-                >Columnas: A=Código, B=Descripción, C=Stock, E=PISO, F=PASILLO,
-                G=NIVEL</small
+                >Columnas: A=Código, B=Descripción, C=Stock, E=Piso, F=Pasillo,
+                G=Nivel</small
               ></label
             >
             <input
@@ -1099,7 +1128,7 @@
         <input
           type="text"
           id="loginUsername"
-          placeholder="Usuario (ej: admin)"
+          placeholder="Usuario (ej: user)"
           autocomplete="off"
         />
         <input type="password" id="loginPassword" placeholder="Contraseña" />
@@ -1233,33 +1262,29 @@
         }
 
         historyListDiv.innerHTML = filteredHistory
-  .map(
-    (h, index) => `
-<div class="history-item" data-id="${h.id}" data-index="${index}">
-    <input type="checkbox" class="history-checkbox" data-id="${h.id}" onchange="updateSelectAllState()">
-    <div class="result-card" style="margin-bottom:10px;">
-        <div class="info-row" style="background:var(--card-bg); justify-content: space-between;">
-            <div>
-                <span class="info-label">📅 ${h.fecha}</span>
-            </div>
-            <div>
-                <span class="info-value" style="color:#667eea;">👤 ${h.usuario} (${h.rol === "admin" ? "Admin" : h.rol === "editor" ? "Editor" : "Visitante"})</span>
-                <button class="delete-single-btn" onclick="confirmDeleteSingle(${h.id})" style="margin-left: 10px;">🗑️</button>
-            </div>
-        </div>
-        <div class="info-row">
-            <span class="info-label">🏷️ Acción:</span>
-            <span class="info-value" style="font-weight:bold;">${h.accion}</span>
-        </div>
-        <div class="info-row" style="border-bottom: none;">
-            <span class="info-label">📝 Detalle:</span>
-            <span class="info-value">${h.detalles}</span>
-        </div>
-    </div>
-</div>
-`,
-  )
-  .join("");
+        .map(
+          (h, index) => `
+      <div class="history-item" data-id="${h.id}" data-index="${index}">
+          <input type="checkbox" class="history-checkbox" data-id="${h.id}" onchange="updateSelectAllState()">
+          <div class="result-card" style="margin-bottom:10px;">
+              <div class="info-row" style="background:var(--card-bg); justify-content: space-between;">
+                  <div>
+                      <span class="info-label">📅 ${h.fecha}</span>
+                  </div>
+                  <div>
+                      <span class="info-value" style="color:#667eea;">👤 ${h.usuario} (${h.rol === "admin" ? "Admin" : h.rol === "editor" ? "Editor" : "Visitante"})</span>
+                      <button class="delete-single-btn" onclick="confirmDeleteSingle(${h.id})" style="margin-left: 10px;">🗑️</button>
+                  </div>
+              </div>
+              <div class="info-row">
+                  <span class="info-value" style="font-weight:bold;">${h.accion}</span>
+                  <span class="info-value">${h.detalles}</span>
+              </div>
+          </div>
+      </div>
+      `,
+        )
+        .join("");
 
         if (selectAllCheckbox) selectAllCheckbox.checked = false;
       }
