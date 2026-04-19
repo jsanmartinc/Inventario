@@ -849,10 +849,16 @@
         <div class="dashboard-section">
           <h3>⚠️ Top 10 Productos con Stock Bajo</h3>
           <div id="lowStockList" class="product-list"></div>
+          <button class="btn-export" onclick="exportarStockBajo()" style="width: auto; padding: 8px 16px; font-size: 12px; margin-top: 10px;">
+            📎 Exportar stock bajo (Excel)
+          </button>
         </div>
         <div class="dashboard-section">
           <h3>📍 Productos Sin Ubicación</h3>
           <div id="noLocationList" class="product-list"></div>
+           <button class="btn-export" onclick="exportarSinUbicacion()" style="width: auto; padding: 8px 16px; font-size: 12px; margin-top: 10px;">
+            📎 Exportar sin ubicación (Excel)
+          </button>
         </div>
         <div class="dashboard-section">
           <h3>🔥 Top 10 Más Buscados</h3>
@@ -1932,6 +1938,74 @@
           option.value = codigo;
           datalist.appendChild(option);
         }
+      }
+
+      // Exportar productos sin ubicación (Excel)
+      function exportarSinUbicacion() {
+        const sinUbicacion = [];
+        for (let cod in productosDB) {
+          const p = productosDB[cod];
+          const u = p.ubicacion;
+          const tieneUbic = u && (u.piso || u.pasillo || u.nivel);
+          if (!tieneUbic) {
+            sinUbicacion.push({
+              codigo: p.codigo,
+              descripcion: p.descripcion,
+              stock: p.stock
+            });
+          }
+        }
+        
+        if (sinUbicacion.length === 0) {
+          alert("✅ No hay productos sin ubicación para exportar");
+          return;
+        }
+        
+        const excelData = [
+          ["CÓDIGO", "DESCRIPCIÓN", "STOCK", "OBSERVACIÓN"],
+          ...sinUbicacion.map(p => [p.codigo, p.descripcion, p.stock, "Pendiente de asignar ubicación"])
+        ];
+        
+        const ws = XLSX.utils.aoa_to_sheet(excelData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sin Ubicación");
+        XLSX.writeFile(wb, `productos_sin_ubicacion_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        
+        agregarHistorial("EXPORTAR SIN UBICACIÓN", `${currentUser} exportó lista de productos sin ubicación (${sinUbicacion.length} productos)`);
+      }
+
+      // Exportar productos con stock bajo (Excel)
+      function exportarStockBajo() {
+        const stockBajo = [];
+        for (let cod in productosDB) {
+          const p = productosDB[cod];
+          if (p.stock > 0 && p.stock < 10) {
+            const u = p.ubicacion;
+            stockBajo.push({
+              codigo: p.codigo,
+              descripcion: p.descripcion,
+              stock: p.stock,
+              ubicacion: u && (u.piso || u.pasillo || u.nivel) ? `${u.piso || "-"}/${u.pasillo || "-"}/${u.nivel || "-"}` : "Sin ubicación"
+            });
+          }
+        }
+        
+        if (stockBajo.length === 0) {
+          alert("✅ No hay productos con stock bajo para exportar");
+          return;
+        }
+        
+        const excelData = [
+          ["CÓDIGO", "DESCRIPCIÓN", "STOCK ACTUAL", "UBICACIÓN", "SUGERENCIA"],
+          ...stockBajo.map(p => [p.codigo, p.descripcion, p.stock, p.ubicacion, p.stock < 3 ? "⚠️ REABASTECER URGENTE" : "🔄 Revisar inventario"])
+        ];
+        
+        const ws = XLSX.utils.aoa_to_sheet(excelData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Stock Bajo");
+        XLSX.writeFile(wb, `productos_stock_bajo_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        
+        agregarHistorial("EXPORTAR STOCK BAJO", `${currentUser} exportó lista de productos con stock bajo (${stockBajo.length} productos)`);
       }
 
       function quickEditLocation(codigo) {
