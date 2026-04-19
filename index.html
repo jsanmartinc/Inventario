@@ -870,6 +870,7 @@
               id="searchId"
               placeholder="Ej: 101001, 102001P, N103021"
               autocomplete="off"
+              list="productosList"
             />
             <button onclick="searchProduct()">Consultar</button>
           </div>
@@ -901,6 +902,7 @@
               id="editId"
               placeholder="Ej: N206089, 102001P"
               autocomplete="off"
+              list="productosList"
             />
             <button onclick="loadProductForEdit()">Cargar producto</button>
           </div>
@@ -1920,6 +1922,18 @@
             .join("");
       }
 
+      function actualizarDatalist() {
+        const datalist = document.getElementById("productosList");
+        if (!datalist) return;
+        
+        datalist.innerHTML = "";
+        for (let codigo in productosDB) {
+          const option = document.createElement("option");
+          option.value = codigo;
+          datalist.appendChild(option);
+        }
+      }
+
       function quickEditLocation(codigo) {
         if (!currentUserRole) {
           showLoginModal();
@@ -2007,6 +2021,7 @@
           lastUpdateSpan.innerText = new Date().toLocaleString();
         updateMetadataDisplay();
         updateDashboard();
+        actualizarDatalist();
         const previewDiv = document.getElementById("preview");
         if (previewDiv) {
           previewDiv.classList.add("hidden");
@@ -2114,6 +2129,7 @@
               productCountSpan.innerText = Object.keys(productosDB).length;
             if (locatedCountSpan) locatedCountSpan.innerText = ubicados;
             updateDashboard();
+            actualizarDatalist();
 
             const previewDiv = document.getElementById("preview");
             if (previewDiv) {
@@ -2566,6 +2582,7 @@
 
           updateLocatedCount();
           updateDashboard();
+          actualizarDatalist();
         }
 
         closeLoginModal();
@@ -2628,5 +2645,6 @@
         }
       init();
     </script>
+    <datalist id="productosList"></datalist>
   </body>
 </html>
