@@ -2412,14 +2412,29 @@
       }
   
       function clearEditForm() {
+        // Mostrar mensaje de confirmación ANTES de limpiar
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "success-message";
+        msgDiv.innerHTML = "🧹 Formulario limpiado correctamente";
+        
+        const editContent = document.getElementById("editContent");
+        const oldMsg = editContent.querySelector(".success-message, .error-message, .warning-message");
+        if (oldMsg) oldMsg.remove();
+        editContent.appendChild(msgDiv);
+        
+        setTimeout(() => {
+          if (msgDiv.parentNode) msgDiv.remove();
+        }, 3000);
+        
+        // Limpiar el formulario
         document.getElementById("editId").value = "";
         document.getElementById("editPiso").value = "";
         document.getElementById("editPasillo").value = "";
         document.getElementById("editNivel").value = "";
         document.getElementById("editForm").classList.add("hidden");
         currentEditProduct = null;
-        showMessage("editForm", "🧹 Formulario limpiado", "success");
       }
+      
       // ============ UTILITY ============
       function showMessage(containerId, message, type) {
         const container = document.getElementById(containerId);
