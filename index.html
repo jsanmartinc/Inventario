@@ -1134,7 +1134,7 @@
     <!-- Modal de Login -->
     <div id="loginModal" class="login-overlay" style="display: none">
       <div class="login-box">
-        <h3>🔐 Iniciar Sesión</h3>
+        <h3>Iniciar Sesión</h3>
         <input
           type="text"
           id="loginUsername"
@@ -2412,6 +2412,10 @@
       }
   
       function clearEditForm() {
+         // Confirmar antes de limpiar
+        if (!confirm("¿Estás seguro de que deseas limpiar el formulario?\n\nLos datos no guardados se perderán.")) {
+          return;
+        }
         // Mostrar mensaje de confirmación ANTES de limpiar
         const msgDiv = document.createElement("div");
         msgDiv.className = "success-message";
@@ -2434,7 +2438,7 @@
         document.getElementById("editForm").classList.add("hidden");
         currentEditProduct = null;
       }
-      
+
       // ============ UTILITY ============
       function showMessage(containerId, message, type) {
         const container = document.getElementById(containerId);
