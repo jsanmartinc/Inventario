@@ -1505,6 +1505,7 @@
         localStorage.removeItem(STORAGE_KEY);
         localStorage.removeItem(METADATA_KEY);
         localStorage.removeItem(SEARCH_HISTORY_KEY);
+        localStorage.removeItem('productosDB_backup');
         const productCountSpan = document.getElementById("productCount");
         const locatedCountSpan = document.getElementById("locatedCount");
         const lastUpdateSpan = document.getElementById("lastUpdate");
@@ -1969,6 +1970,25 @@
             }
           }
 
+          // ============ ACTUALIZAR CONTADORES ============
+          const productCountSpan = document.getElementById("productCount");
+          const locatedCountSpan = document.getElementById("locatedCount");
+
+          if (productCountSpan) {
+            productCountSpan.innerText = Object.keys(productosDB).length;
+          }
+
+          let ubicados = 0;
+          for (let cod in productosDB) {
+            const u = productosDB[cod].ubicacion;
+            if (u && (u.piso || u.pasillo || u.nivel)) ubicados++;
+          }
+
+          if (locatedCountSpan) {
+            locatedCountSpan.innerText = ubicados;
+          }
+          // =============================================
+
           updateLocatedCount();
           updateDashboard();
         }
@@ -1977,7 +1997,6 @@
         checkSession();
         registerServiceWorker();
       }
-
       init();
     </script>
   </body>
