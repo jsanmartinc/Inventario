@@ -2572,7 +2572,60 @@
         checkSession();
         registerServiceWorker();
         updateHistoryList();
-      }
+
+        // ============ ATAJO DE TECLADO ENTER PARA LOGIN ============
+          const loginUsername = document.getElementById("loginUsername");
+          const loginPassword = document.getElementById("loginPassword");
+
+          if (loginUsername) {
+            loginUsername.addEventListener("keypress", function(e) {
+              if (e.key === "Enter") {
+                attemptLogin();
+              }
+            });
+          }
+
+          if (loginPassword) {
+            loginPassword.addEventListener("keypress", function(e) {
+              if (e.key === "Enter") {
+                attemptLogin();
+              }
+            });
+          }
+
+          // Enter en Buscar por CÓDIGO
+          const searchIdInput = document.getElementById("searchId");
+          if (searchIdInput) {
+            searchIdInput.addEventListener("keypress", function(e) {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                searchProduct();
+              }
+            });
+          }
+
+          // Enter en Buscar por DESCRIPCIÓN
+          const searchDescInput = document.getElementById("searchDesc");
+          if (searchDescInput) {
+            searchDescInput.addEventListener("keypress", function(e) {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                searchByDescription();
+              }
+            });
+          }
+
+          // Enter en Seleccionar producto por CÓDIGO (Editar)
+          const editIdInput = document.getElementById("editId");
+          if (editIdInput) {
+            editIdInput.addEventListener("keypress", function(e) {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                loadProductForEdit();
+              }
+            });
+          }
+        }
       init();
     </script>
   </body>
