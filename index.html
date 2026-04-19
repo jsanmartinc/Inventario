@@ -727,6 +727,23 @@
           outline: none;
           border-color: #667eea;
       }
+      @media (min-width: 768px) {
+        .history-filters {
+          display: inline-block;
+          width: auto;
+          margin-right: 20px;
+          margin-bottom: 0;
+          vertical-align: middle;
+        }
+        
+        .history-actions {
+          display: inline-flex;
+          width: auto;
+          gap: 10px;
+          margin-bottom: 0;
+          vertical-align: middle;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1015,7 +1032,11 @@
         <div id="historyContent">
           <div class="info-badge" id="historyUserBadge"></div>
 
-          <!-- Filtros por acción - DROPDOWN -->
+            </button>
+          </div>
+
+          <!-- Acciones masivas -->
+           <!-- Filtros por acción - DROPDOWN -->
         <div class="history-filters">
             <select id="historyFilterSelect" class="history-filter-select" onchange="filterHistoryFromSelect()">
                 <option value="todos">📋 Todos los registros</option>
@@ -1028,10 +1049,6 @@
                 <option value="BORRAR HISTORIAL">📜 Borrados de historial</option>
             </select>
         </div>
-            </button>
-          </div>
-
-          <!-- Acciones masivas -->
           <div class="history-actions">
             <label style="display: flex; align-items: center; gap: 5px">
               <input
