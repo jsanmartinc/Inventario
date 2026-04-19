@@ -774,6 +774,9 @@
           justify-content: flex-start;
         }
       }
+            body.dark .history-actions label span {
+        color: white;
+      }
     </style>
   </head>
   <body>
@@ -1625,33 +1628,31 @@
 
       function createUser() {
         if (currentUserRole !== "admin") {
-          showMessage(
-            "usersResult",
-            "❌ Solo administrador puede crear usuarios",
-            "error",
-          );
+          showMessage("usersResult", "❌ Solo administrador puede crear usuarios", "error");
           return;
         }
-        const username = document.getElementById("newUsername").value.trim();
+        let username = document.getElementById("newUsername").value.trim();
         const password = document.getElementById("newPassword").value.trim();
         const role = document.getElementById("newRole").value;
+        
         if (!username || !password) {
           showMessage("usersResult", "❌ Complete todos los campos", "error");
           return;
         }
         if (password.length < 4) {
-          showMessage(
-            "usersResult",
-            "❌ La contraseña debe tener al menos 4 caracteres",
-            "error",
-          );
+          showMessage("usersResult", "❌ La contraseña debe tener al menos 4 caracteres", "error");
           return;
         }
+        
+        // Convertir a minúsculas para evitar duplicados
+        username = username.toLowerCase();
+        
         const users = getUsers();
         if (users[username]) {
           showMessage("usersResult", "❌ El usuario ya existe", "error");
           return;
         }
+        
         users[username] = {
           username: username,
           password: password,
@@ -1688,19 +1689,13 @@
         }
       }
 
-      function changePassword() {
+     function changePassword() {
         if (currentUserRole !== "admin") {
-          showMessage(
-            "usersResult",
-            "❌ Solo administrador puede cambiar contraseñas",
-            "error",
-          );
+          showMessage("usersResult", "❌ Solo administrador puede cambiar contraseñas", "error");
           return;
         }
-        const username = document.getElementById("changeUser").value.trim();
-        const newPassword = document
-          .getElementById("changePassword")
-          .value.trim();
+        let username = document.getElementById("changeUser").value.trim().toLowerCase();
+        const newPassword = document.getElementById("changePassword").value.trim();
         if (!username || !newPassword) {
           showMessage("usersResult", "❌ Complete los campos", "error");
           return;
@@ -1718,33 +1713,20 @@
         saveUsers(users);
         document.getElementById("changeUser").value = "";
         document.getElementById("changePassword").value = "";
-        showMessage(
-          "usersResult",
-          `✅ Contraseña de "${username}" actualizada`,
-          "success",
-        );
+        showMessage("usersResult", `✅ Contraseña de "${username}" actualizada`, "success");
       }
-
       function deleteUser() {
         if (currentUserRole !== "admin") {
-          showMessage(
-            "usersResult",
-            "❌ Solo administrador puede eliminar usuarios",
-            "error",
-          );
+          showMessage("usersResult", "❌ Solo administrador puede eliminar usuarios", "error");
           return;
         }
-        const username = document.getElementById("deleteUser").value.trim();
+        let username = document.getElementById("deleteUser").value.trim().toLowerCase();
         if (!username) {
           showMessage("usersResult", "❌ Ingrese un usuario", "error");
           return;
         }
         if (username === "admin") {
-          showMessage(
-            "usersResult",
-            "❌ No se puede eliminar al administrador principal",
-            "error",
-          );
+          showMessage("usersResult", "❌ No se puede eliminar al administrador principal", "error");
           return;
         }
         const users = getUsers();
@@ -1756,15 +1738,8 @@
           delete users[username];
           saveUsers(users);
           document.getElementById("deleteUser").value = "";
-          agregarHistorial(
-            "ELIMINAR USUARIO",
-            `${currentUser} eliminó usuario ${username}`,
-          );
-          showMessage(
-            "usersResult",
-            `✅ Usuario "${username}" eliminado`,
-            "success",
-          );
+          agregarHistorial("ELIMINAR USUARIO", `${currentUser} eliminó usuario ${username}`);
+          showMessage("usersResult", `✅ Usuario "${username}" eliminado`, "success");
         }
       }
 
