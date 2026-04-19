@@ -789,7 +789,7 @@
         <button class="logout-btn hidden" id="logoutBtn" onclick="logout()">
          Cerrar Sesión
         </button>
-        <h1>📦 Sistema de Inventario</h1>
+        <h1>Sistema de Inventario</h1>
         <p>Gestión de ubicaciones de productos</p>
       </div>
 
@@ -956,18 +956,17 @@
             <div>📅 Fecha: <span id="lastDate">-</span></div>
           </div>
           <div class="file-input">
-            <label for="excelFile"
-              >📂 Seleccionar archivo Excel<br /><small
+            <label style="cursor: default; background: var(--badge-info-bg); opacity: 0.8;">
+              📂 Seleccionar archivo Excel<br /><small
                 >Columnas: A=Código, B=Descripción, C=Stock, E=Piso, F=Pasillo,
                 G=Nivel</small
-              ></label
-            >
+              >
+            </label>
             <input
               type="file"
               id="excelFile"
               accept=".xlsx, .xls, .csv"
               style="display: none"
-              onchange="loadExcelFile(this.files[0])"
             />
           </div>
           <button onclick="document.getElementById('excelFile').click()">
@@ -1896,9 +1895,9 @@
           localStorage.getItem(SEARCH_HISTORY_KEY) || "[]",
         );
         const counts = {};
-        history.forEach((h) => {
-          counts[h.codigo] = (counts[h.codigo] || 0) + 1;
-        });
+          history.forEach((h) => {
+            counts[h.codigo] = (counts[h.codigo] || 0) + (h.contador || 1);  // ← USA EL CONTADOR
+          });
         const top = Object.entries(counts)
           .sort((a, b) => b[1] - a[1])
           .slice(0, 10);
@@ -1917,6 +1916,9 @@
           showLoginModal();
           return;
         }
+        // Marcar que venimos desde el Dashboard
+        sessionStorage.setItem("fromDashboard", "true");
+        
         const editIdInput = document.getElementById("editId");
         if (editIdInput) editIdInput.value = codigo;
         switchTab("edit");
@@ -1924,14 +1926,30 @@
       }
 
       function saveSearchHistory(codigo) {
-        let history = JSON.parse(
-          localStorage.getItem(SEARCH_HISTORY_KEY) || "[]",
-        );
-        history = history.filter((h) => h.codigo !== codigo);
-        history.unshift({ codigo: codigo, fecha: new Date().toISOString() });
-        history = history.slice(0, 20);
-        localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(history));
-      }
+  let history = JSON.parse(localStorage.getItem(SEARCH_HISTORY_KEY) || "[]");
+  
+  // Migrar datos antiguos (sin contador) a nuevo formato
+  history = history.map(h => ({ ...h, contador: h.contador || 1 }));
+  
+  const existingIndex = history.findIndex((h) => h.codigo === codigo);
+  
+  if (existingIndex !== -1) {
+    history[existingIndex].contador = (history[existingIndex].contador || 1) + 1;
+    history[existingIndex].fecha = new Date().toISOString();
+    const item = history.splice(existingIndex, 1)[0];
+    history.unshift(item);
+  } else {
+    history.unshift({ 
+      codigo: codigo, 
+      fecha: new Date().toISOString(),
+      contador: 1
+    });
+  }
+  
+  history = history.slice(0, 20);
+  localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(history));
+  updateDashboard();
+}
 
       // ============ LIMPIEZA ============
       function showClearDatabaseDialog() {
@@ -2324,7 +2342,7 @@
         if (editForm) editForm.classList.remove("hidden");
       }
 
-      function saveLocation() {
+     function saveLocation() {
         if (!currentUserRole) {
           showLoginModal();
           return;
@@ -2351,6 +2369,17 @@
           `✅ Ubicación guardada para ${currentEditProduct.codigo}`,
           "success",
         );
+
+        // === NUEVO: Volver al Dashboard si veníamos de allí ===
+        // Verificar si el producto se cargó desde el Dashboard
+        const fromDashboard = sessionStorage.getItem("fromDashboard") === "true";
+        if (fromDashboard) {
+          sessionStorage.removeItem("fromDashboard");
+          setTimeout(() => {
+            switchTab("dashboard");
+            updateDashboard(); // Actualizar nuevamente por seguridad
+          }, 500);
+        }
       }
 
       // ============ UTILITY ============
