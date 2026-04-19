@@ -1233,29 +1233,33 @@
         }
 
         historyListDiv.innerHTML = filteredHistory
-          .map(
-            (h, index) => `
-        <div class="history-item" data-id="${h.id}" data-index="${index}">
-            <input type="checkbox" class="history-checkbox" data-id="${h.id}" onchange="updateSelectAllState()">
-            <div class="result-card" style="margin-bottom:10px;">
-                <div class="info-row" style="background:var(--card-bg);">
-                    <span class="info-label">📅 ${h.fecha}</span>
-                    <span class="info-value" style="color:#667eea;">👤 ${h.usuario} (${h.rol === "admin" ? "Admin" : h.rol === "editor" ? "Editor" : "Visitante"})</span>
-                    <button class="delete-single-btn" onclick="confirmDeleteSingle(${h.id})">🗑️</button>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">🏷️ Acción:</span>
-                    <span class="info-value" style="font-weight:bold;">${h.accion}</span>
-                </div>
-                <div class="info-row" style="border-bottom: none;">
-                    <span class="info-label">📝 Detalle:</span>
-                    <span class="info-value">${h.detalles}</span>
-                </div>
+  .map(
+    (h, index) => `
+<div class="history-item" data-id="${h.id}" data-index="${index}">
+    <input type="checkbox" class="history-checkbox" data-id="${h.id}" onchange="updateSelectAllState()">
+    <div class="result-card" style="margin-bottom:10px;">
+        <div class="info-row" style="background:var(--card-bg); justify-content: space-between;">
+            <div>
+                <span class="info-label">📅 ${h.fecha}</span>
+            </div>
+            <div>
+                <span class="info-value" style="color:#667eea;">👤 ${h.usuario} (${h.rol === "admin" ? "Admin" : h.rol === "editor" ? "Editor" : "Visitante"})</span>
+                <button class="delete-single-btn" onclick="confirmDeleteSingle(${h.id})" style="margin-left: 10px;">🗑️</button>
             </div>
         </div>
-    `,
-          )
-          .join("");
+        <div class="info-row">
+            <span class="info-label">🏷️ Acción:</span>
+            <span class="info-value" style="font-weight:bold;">${h.accion}</span>
+        </div>
+        <div class="info-row" style="border-bottom: none;">
+            <span class="info-label">📝 Detalle:</span>
+            <span class="info-value">${h.detalles}</span>
+        </div>
+    </div>
+</div>
+`,
+  )
+  .join("");
 
         if (selectAllCheckbox) selectAllCheckbox.checked = false;
       }
