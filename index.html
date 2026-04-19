@@ -18,7 +18,7 @@
     <meta name="apple-mobile-web-app-title" content="Inventario" />
     <meta name="theme-color" content="#667eea" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="icons/ios/icon-192.png" />
 
     <style>
       /* ============ VARIABLES CSS ============ */
@@ -579,55 +579,55 @@
         }
       }
       .theme-btn-footer {
-    width: auto !important;
-    display: inline-block;
-    padding: 8px 16px;
-    font-size: 12px;
-    margin-top: 10px;
-    float: right;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 20px;
-    color: white;
-    cursor: pointer;
-}
-.theme-btn-footer:hover {
-    opacity: 0.9;
-}
-.theme-btn-footer:active {
-    transform: scale(0.98);
-}
-
-/* Footer */
-.footer {
-    overflow: auto;
-    padding: 20px;
-    background: var(--footer-bg);
-    color: var(--text-light);
-    font-size: 12px;
-    transition: background 0.3s ease;
-}
-
-.footer p {
-    float: left;
-    margin: 8px 0 0 0;
-}
-
-/* En móviles */
-@media (max-width: 480px) {
-    .footer p {
-        float: none;
-        text-align: center;
-        display: block;
-        margin-bottom: 10px;
-    }
-    .theme-btn-footer {
-        float: none;
-        display: block;
-        margin: 0 auto;
         width: auto !important;
-    }
-}
+        display: inline-block;
+        padding: 8px 16px;
+        font-size: 12px;
+        margin-top: 10px;
+        float: right;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 20px;
+        color: white;
+        cursor: pointer;
+      }
+      .theme-btn-footer:hover {
+        opacity: 0.9;
+      }
+      .theme-btn-footer:active {
+        transform: scale(0.98);
+      }
+
+      /* Footer */
+      .footer {
+        overflow: auto;
+        padding: 20px;
+        background: var(--footer-bg);
+        color: var(--text-light);
+        font-size: 12px;
+        transition: background 0.3s ease;
+      }
+
+      .footer p {
+        float: left;
+        margin: 8px 0 0 0;
+      }
+
+      /* En móviles */
+      @media (max-width: 480px) {
+        .footer p {
+          float: none;
+          text-align: center;
+          display: block;
+          margin-bottom: 10px;
+        }
+        .theme-btn-footer {
+          float: none;
+          display: block;
+          margin: 0 auto;
+          width: auto !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1594,6 +1594,21 @@
             }
 
             productosDB = nuevosProductos;
+            localStorage.setItem(
+              "productosDB_backup",
+              JSON.stringify(nuevosProductos),
+            );
+
+            // Guardar ubicaciones en localStorage
+            const ubicacionesParaGuardar = {};
+            for (let cod in nuevosProductos) {
+              ubicacionesParaGuardar[cod] = nuevosProductos[cod].ubicacion;
+            }
+            localStorage.setItem(
+              STORAGE_KEY,
+              JSON.stringify(ubicacionesParaGuardar),
+            );
+
             saveMetadata(currentUser);
 
             let ubicados = 0;
@@ -1880,28 +1895,28 @@
 
       function switchTab(tab) {
         // Orden correcto de las pestañas según el HTML
-        const tabsList = ['search', 'dashboard', 'edit', 'upload', 'users'];
+        const tabsList = ["search", "dashboard", "edit", "upload", "users"];
         const index = tabsList.indexOf(tab);
-    
+
         if (index === -1) return;
-    
+
         // Ocultar todos los contenidos
-        const contents = document.querySelectorAll('.tab-content');
-        contents.forEach(c => c.classList.remove('active'));
-    
+        const contents = document.querySelectorAll(".tab-content");
+        contents.forEach((c) => c.classList.remove("active"));
+
         // Mostrar el contenido seleccionado
         const targetContent = document.getElementById(`tab-${tab}`);
-        if (targetContent) targetContent.classList.add('active');
-    
+        if (targetContent) targetContent.classList.add("active");
+
         // Actualizar la clase active en las pestañas
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(t => t.classList.remove('active'));
-    
+        const tabs = document.querySelectorAll(".tab");
+        tabs.forEach((t) => t.classList.remove("active"));
+
         // Activar la pestaña correcta por su índice
-        if (tabs[index]) tabs[index].classList.add('active');
-    
+        if (tabs[index]) tabs[index].classList.add("active");
+
         // Si es dashboard, actualizar datos
-        if (tab === 'dashboard') updateDashboard();
+        if (tab === "dashboard") updateDashboard();
       }
 
       // ============ PWA: Registrar Service Worker ============
@@ -1933,10 +1948,31 @@
         loadTheme();
         getUsers();
         updateMetadataDisplay();
-        const savedLocations = localStorage.getItem(STORAGE_KEY);
-        if (savedLocations && Object.keys(productosDB).length > 0)
-          loadSavedLocations();
-        updateDashboard();
+
+        // Recuperar productos guardados
+        const savedProducts = localStorage.getItem("productosDB_backup");
+        if (savedProducts) {
+          productosDB = JSON.parse(savedProducts);
+          console.log(
+            "Productos recuperados:",
+            Object.keys(productosDB).length,
+          );
+
+          // Recuperar ubicaciones guardadas
+          const savedLocations = localStorage.getItem(STORAGE_KEY);
+          if (savedLocations) {
+            const ubicaciones = JSON.parse(savedLocations);
+            for (let cod in ubicaciones) {
+              if (productosDB[cod]) {
+                productosDB[cod].ubicacion = ubicaciones[cod];
+              }
+            }
+          }
+
+          updateLocatedCount();
+          updateDashboard();
+        }
+
         closeLoginModal();
         checkSession();
         registerServiceWorker();
