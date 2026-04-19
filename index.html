@@ -101,13 +101,15 @@
         -webkit-overflow-scrolling: touch;
       }
       .container {
-        max-width: 600px;
+        max-width: 1200px;
         margin: 0 auto;
         background: var(--container-bg);
         border-radius: 20px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         overflow: hidden;
         transition: background 0.3s ease;
+        display: flex;
+        flex-direction: column;
       }
       .header {
         background: linear-gradient(
@@ -407,14 +409,7 @@
         overflow-y: auto;
         color: var(--text-primary);
       }
-      .footer {
-        padding: 20px;
-        text-align: center;
-        background: var(--footer-bg);
-        color: var(--text-light);
-        font-size: 12px;
-        transition: background 0.3s ease;
-      }
+     
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -578,55 +573,159 @@
           right: 70px;
         }
       }
-      .theme-btn-footer {
-        width: auto !important;
-        display: inline-block;
-        padding: 8px 16px;
-        font-size: 12px;
-        margin-top: 10px;
-        float: right;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        border-radius: 20px;
-        color: white;
-        cursor: pointer;
-      }
-      .theme-btn-footer:hover {
-        opacity: 0.9;
-      }
-      .theme-btn-footer:active {
-        transform: scale(0.98);
-      }
-
+      
       /* Footer */
       .footer {
-        overflow: auto;
+        max-width: 1200px;
+        margin: 0 auto;
         padding: 20px;
         background: var(--footer-bg);
         color: var(--text-light);
         font-size: 12px;
         transition: background 0.3s ease;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        border-radius: 20px;
       }
 
       .footer p {
-        float: left;
-        margin: 8px 0 0 0;
+        margin: 0;
       }
 
-      /* En móviles */
-      @media (max-width: 480px) {
-        .footer p {
-          float: none;
+      .theme-btn-footer {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        cursor: pointer;
+        color: var(--text-secondary);
+        width: auto;
+        transition: all 0.2s;
+      }
+
+      .theme-btn-footer:hover {
+        background: var(--badge-info-bg);
+      }
+
+      @media (max-width: 550px) {
+        .footer {
+          flex-direction: column;
           text-align: center;
-          display: block;
-          margin-bottom: 10px;
+          gap: 8px;
         }
-        .theme-btn-footer {
-          float: none;
-          display: block;
-          margin: 0 auto;
-          width: auto !important;
+      }
+
+      .footer p {
+        margin: 0;
+      }
+
+      .theme-btn-footer {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        cursor: pointer;
+        color: var(--text-secondary);
+        width: auto;
+        transition: all 0.2s;
+      }
+
+      .theme-btn-footer:hover {
+        background: var(--badge-info-bg);
+      }
+
+      /* Responsive - Mantiene la unión */
+      @media (max-width: 550px) {
+        .footer {
+          flex-direction: column;
+          text-align: center;
+          gap: 8px;
         }
+      }
+
+      /* ============ HISTORIAL - NUEVOS ESTILOS ============ */
+      .history-filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+      .filter-btn {
+        background: var(--badge-info-bg);
+        color: var(--text-primary);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        cursor: pointer;
+        width: auto;
+        margin: 0;
+      }
+      .filter-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+      .history-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+      .history-actions button {
+        width: auto;
+        padding: 8px 16px;
+        font-size: 12px;
+      }
+      .history-item {
+        position: relative;
+      }
+      .history-checkbox {
+        position: absolute;
+        left: 10px;
+        top: 15px;
+        transform: scale(1.2);
+        cursor: pointer;
+        z-index: 1;
+      }
+      .history-item .result-card {
+        margin-left: 35px;
+      }
+      .select-all-checkbox {
+        margin-left: 10px;
+        transform: scale(1.1);
+        cursor: pointer;
+      }
+      .delete-single-btn {
+        background: #f44336;
+        padding: 4px 10px;
+        font-size: 11px;
+        border-radius: 5px;
+        width: auto;
+        margin-left: 10px;
+      }
+      /* ============ HISTORIAL - DROPDOWN ============ */
+      .history-filter-select {
+          background: var(--container-bg);
+          color: var(--text-primary);
+          border: 1px solid var(--border-color);
+          border-radius: 20px;
+          padding: 8px 16px;
+          font-size: 13px;
+          cursor: pointer;
+          width: auto;
+          min-width: 200px;
+      }
+      .history-filter-select:hover {
+          border-color: #667eea;
+      }
+      .history-filter-select:focus {
+          outline: none;
+          border-color: #667eea;
       }
     </style>
   </head>
@@ -659,6 +758,13 @@
         </div>
         <div class="tab hidden-tab" id="tabUsers" onclick="switchTab('users')">
           👥 Usuarios
+        </div>
+        <div
+          class="tab hidden-tab"
+          id="tabHistory"
+          onclick="switchTab('history')"
+        >
+          📜 Historial
         </div>
       </div>
 
@@ -904,6 +1010,63 @@
         </div>
       </div>
 
+      <!-- Pestaña de Historial -->
+      <div id="tab-history" class="tab-content">
+        <div id="historyContent">
+          <div class="info-badge" id="historyUserBadge"></div>
+
+          <!-- Filtros por acción - DROPDOWN -->
+        <div class="history-filters">
+            <select id="historyFilterSelect" class="history-filter-select" onchange="filterHistoryFromSelect()">
+                <option value="todos">📋 Todos los registros</option>
+                <option value="CARGAR INVENTARIO">📂 Cargas de inventario</option>
+                <option value="EDITAR UBICACIÓN">✏️ Ediciones de ubicación</option>
+                <option value="LIMPIAR BD">🗑️ Limpiezas de BD</option>
+                <option value="CREAR USUARIO">👥 Creación de usuarios</option>
+                <option value="ELIMINAR USUARIO">🗑️ Eliminación de usuarios</option>
+                <option value="EXPORTAR">📎 Exportaciones a Excel</option>
+                <option value="BORRAR HISTORIAL">📜 Borrados de historial</option>
+            </select>
+        </div>
+            </button>
+          </div>
+
+          <!-- Acciones masivas -->
+          <div class="history-actions">
+            <label style="display: flex; align-items: center; gap: 5px">
+              <input
+                type="checkbox"
+                id="selectAllCheckbox"
+                onchange="toggleSelectAll()"
+              />
+              <span style="font-size: 12px">Seleccionar todos</span>
+            </label>
+            <button
+              class="btn-danger"
+              id="deleteSelectedBtn"
+              onclick="confirmDeleteSelected()"
+              style="margin: 0"
+            >
+              🗑️ Borrar seleccionados
+            </button>
+            <button
+              class="btn-danger"
+              id="clearHistoryBtn"
+              onclick="confirmClearHistory()"
+              style="margin: 0"
+            >
+              🗑️ Borrar todo
+            </button>
+          </div>
+
+          <!-- Lista del historial -->
+          <div
+            id="historyList"
+            style="max-height: 400px; overflow-y: auto"
+          ></div>
+        </div>
+      </div>
+
       <div class="footer">
         <p>Última actualización: <span id="lastUpdate">No hay datos</span></p>
         <button class="theme-btn-footer" id="themeBtn" onclick="toggleTheme()">
@@ -942,6 +1105,7 @@
       const SEARCH_HISTORY_KEY = "search_history";
       const SESSION_KEY = "inventario_session";
       const THEME_KEY = "inventario_theme";
+      const HISTORY_KEY = "inventario_historial";
 
       const DEFAULT_ADMIN = {
         username: "admin",
@@ -955,6 +1119,8 @@
       let currentEditProduct = null;
       let currentUser = null;
       let currentUserRole = null;
+      let currentHistoryFilter = "todos";
+      let historyData = [];
 
       // ============ FUNCIONES DE TEMA (MODO OSCURO) ============
       function toggleTheme() {
@@ -982,6 +1148,260 @@
         } else {
           document.body.classList.remove("dark");
           if (themeBtn) themeBtn.innerHTML = "🌙";
+        }
+      }
+
+      // ============ FUNCIONES DE HISTORIAL ============
+      function agregarHistorial(accion, detalles) {
+        const historial = getHistorial();
+        const usuario = currentUser || "Sistema";
+        const rol = currentUserRole || "visitante";
+
+        historial.unshift({
+          id: Date.now(),
+          fecha: new Date().toLocaleString(),
+          usuario: usuario,
+          rol: rol,
+          accion: accion,
+          detalles: detalles,
+        });
+
+        while (historial.length > 500) historial.pop();
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(historial));
+      }
+
+      function getHistorial() {
+        const saved = localStorage.getItem(HISTORY_KEY);
+        if (saved) return JSON.parse(saved);
+        return [];
+      }
+
+      function limpiarHistorial() {
+        if (currentUserRole !== "admin") return false;
+        localStorage.removeItem(HISTORY_KEY);
+        return true;
+      }
+
+      function updateHistoryList() {
+        const historial = getHistorial();
+        historyData = historial;
+
+        const historyCountSpan = document.getElementById("historyCount");
+        const historyListDiv = document.getElementById("historyList");
+        const selectAllCheckbox = document.getElementById("selectAllCheckbox");
+
+        // Sincronizar el select con el filtro actual
+        const select = document.getElementById('historyFilterSelect');
+        if (select && select.value !== currentHistoryFilter) {
+            select.value = currentHistoryFilter;
+        }
+
+        // Aplicar filtro
+        let filteredHistory = historial;
+        if (currentHistoryFilter !== "todos") {
+          filteredHistory = historial.filter(
+            (h) => h.accion === currentHistoryFilter,
+          );
+        }
+
+        if (historyCountSpan)
+          historyCountSpan.innerText = filteredHistory.length;
+        if (!historyListDiv) return;
+
+        if (filteredHistory.length === 0) {
+          historyListDiv.innerHTML =
+            '<div class="info-badge" style="text-align:center;">📭 No hay registros en el historial</div>';
+          if (selectAllCheckbox) selectAllCheckbox.checked = false;
+          return;
+        }
+
+        historyListDiv.innerHTML = filteredHistory
+          .map(
+            (h, index) => `
+        <div class="history-item" data-id="${h.id}" data-index="${index}">
+            <input type="checkbox" class="history-checkbox" data-id="${h.id}" onchange="updateSelectAllState()">
+            <div class="result-card" style="margin-bottom:10px;">
+                <div class="info-row" style="background:var(--card-bg);">
+                    <span class="info-label">📅 ${h.fecha}</span>
+                    <span class="info-value" style="color:#667eea;">👤 ${h.usuario} (${h.rol === "admin" ? "Admin" : h.rol === "editor" ? "Editor" : "Visitante"})</span>
+                    <button class="delete-single-btn" onclick="confirmDeleteSingle(${h.id})">🗑️</button>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🏷️ Acción:</span>
+                    <span class="info-value" style="font-weight:bold;">${h.accion}</span>
+                </div>
+                <div class="info-row" style="border-bottom: none;">
+                    <span class="info-label">📝 Detalle:</span>
+                    <span class="info-value">${h.detalles}</span>
+                </div>
+            </div>
+        </div>
+    `,
+          )
+          .join("");
+
+        if (selectAllCheckbox) selectAllCheckbox.checked = false;
+      }
+
+      function filterHistory(filtro) {
+        currentHistoryFilter = filtro;
+
+        // Actualizar botones activos
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          if (btn.getAttribute("data-filter") === filtro) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
+
+        updateHistoryList();
+      }
+
+      function filterHistoryFromSelect() {
+          const select = document.getElementById('historyFilterSelect');
+          const filtro = select.value;
+          currentHistoryFilter = filtro;
+          updateHistoryList();
+      }
+
+      function getSelectedIds() {
+        const checkboxes = document.querySelectorAll(
+          ".history-checkbox:checked",
+        );
+        return Array.from(checkboxes).map((cb) =>
+          parseInt(cb.getAttribute("data-id")),
+        );
+      }
+
+      function toggleSelectAll() {
+        const selectAll = document.getElementById("selectAllCheckbox");
+        const checkboxes = document.querySelectorAll(".history-checkbox");
+        checkboxes.forEach((cb) => (cb.checked = selectAll.checked));
+      }
+
+      function updateSelectAllState() {
+        const selectAll = document.getElementById("selectAllCheckbox");
+        const checkboxes = document.querySelectorAll(".history-checkbox");
+        if (selectAll) {
+          selectAll.checked =
+            checkboxes.length > 0 &&
+            Array.from(checkboxes).every((cb) => cb.checked);
+        }
+      }
+
+      function confirmDeleteSingle(id) {
+        if (currentUserRole !== "admin") {
+          showMessage(
+            "historyContent",
+            "❌ Solo administrador puede borrar registros",
+            "error",
+          );
+          return;
+        }
+
+        if (confirm(`⚠️ ¿Eliminar este registro del historial?`)) {
+          deleteHistoryItems([id]);
+        }
+      }
+
+      function confirmDeleteSelected() {
+        if (currentUserRole !== "admin") {
+          showMessage(
+            "historyContent",
+            "❌ Solo administrador puede borrar registros",
+            "error",
+          );
+          return;
+        }
+
+        const selectedIds = getSelectedIds();
+        if (selectedIds.length === 0) {
+          showMessage(
+            "historyContent",
+            "❌ No hay registros seleccionados",
+            "error",
+          );
+          return;
+        }
+
+        if (
+          confirm(
+            `⚠️ ¿Eliminar ${selectedIds.length} registro(s) del historial?`,
+          )
+        ) {
+          deleteHistoryItems(selectedIds);
+        }
+      }
+
+      function deleteHistoryItems(ids) {
+        let historial = getHistorial();
+        historial = historial.filter((h) => !ids.includes(h.id));
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(historial));
+
+        agregarHistorial(
+          "BORRAR HISTORIAL",
+          `${currentUser} borró ${ids.length} registro(s) del historial`,
+        );
+        updateHistoryList();
+        showMessage(
+          "historyContent",
+          `✅ ${ids.length} registro(s) eliminado(s)`,
+          "success",
+        );
+      }
+
+      function confirmClearHistory() {
+        if (currentUserRole !== "admin") {
+          showMessage(
+            "historyContent",
+            "❌ Solo administrador puede borrar el historial",
+            "error",
+          );
+          return;
+        }
+
+        const historial = getHistorial();
+        if (historial.length === 0) {
+          showMessage(
+            "historyContent",
+            "📭 No hay registros para borrar",
+            "warning",
+          );
+          return;
+        }
+
+        const specialPassword = prompt(
+          `🔐 Se van a borrar ${historial.length} registros.\nIngrese la CLAVE ESPECIAL para BORRAR TODO EL HISTORIAL:\n(Esta acción es irreversible)`,
+        );
+        const CLEAR_PASSWORD = "clearDB2024";
+
+        if (specialPassword !== CLEAR_PASSWORD) {
+          if (specialPassword !== null)
+            showMessage(
+              "historyContent",
+              "❌ Clave especial incorrecta",
+              "error",
+            );
+          return;
+        }
+
+        if (
+          confirm(
+            `⚠️ ¿ESTÁS ABSOLUTAMENTE SEGURO? Esto eliminará los ${historial.length} registros del historial. ⚠️`,
+          )
+        ) {
+          limpiarHistorial();
+          updateHistoryList();
+          agregarHistorial(
+            "BORRAR HISTORIAL",
+            `${currentUser} borró todo el historial (${historial.length} registros)`,
+          );
+          showMessage(
+            "historyContent",
+            `✅ Historial borrado correctamente (${historial.length} registros)`,
+            "success",
+          );
         }
       }
 
@@ -1080,9 +1500,11 @@
         const tabEdit = document.getElementById("tabEdit");
         const tabUpload = document.getElementById("tabUpload");
         const tabUsers = document.getElementById("tabUsers");
+        const tabHistory = document.getElementById("tabHistory");
         const userInfoBadge = document.getElementById("userInfoBadge");
         const uploadUserBadge = document.getElementById("uploadUserBadge");
         const usersUserBadge = document.getElementById("usersUserBadge");
+        const historyUserBadge = document.getElementById("historyUserBadge");
 
         if (loginBtn) loginBtn.classList.add("hidden");
         if (logoutBtn) logoutBtn.classList.remove("hidden");
@@ -1091,12 +1513,15 @@
         if (tabEdit) tabEdit.classList.remove("hidden-tab");
         if (tabUpload) tabUpload.classList.remove("hidden-tab");
         if (tabUsers) tabUsers.classList.remove("hidden-tab");
+        if (tabHistory) tabHistory.classList.remove("hidden-tab");
         if (userInfoBadge)
           userInfoBadge.innerHTML = `👤 Usuario: ${currentUser} | Rol: ${currentUserRole === "admin" ? "Administrador" : "Editor"} | Modo Edición activo`;
         if (uploadUserBadge)
           uploadUserBadge.innerHTML = `👤 Usuario: ${currentUser} (${currentUserRole === "admin" ? "Administrador" : "Editor"}) | Modo Administración activo`;
         if (usersUserBadge)
           usersUserBadge.innerHTML = `👤 Usuario: ${currentUser} (Administrador) | Gestión de Usuarios`;
+        if (historyUserBadge)
+          historyUserBadge.innerHTML = `👤 Usuario: ${currentUser} (${currentUserRole === "admin" ? "Administrador" : "Editor"}) | Historial de movimientos`;
 
         if (currentUserRole === "admin") updateUsersList();
       }
@@ -1108,6 +1533,7 @@
         const tabEdit = document.getElementById("tabEdit");
         const tabUpload = document.getElementById("tabUpload");
         const tabUsers = document.getElementById("tabUsers");
+        const tabHistory = document.getElementById("tabHistory");
 
         if (loginBtn) loginBtn.classList.remove("hidden");
         if (logoutBtn) logoutBtn.classList.add("hidden");
@@ -1115,6 +1541,7 @@
         if (tabEdit) tabEdit.classList.add("hidden-tab");
         if (tabUpload) tabUpload.classList.add("hidden-tab");
         if (tabUsers) tabUsers.classList.add("hidden-tab");
+        if (tabHistory) tabHistory.classList.add("hidden-tab");
 
         const activeTab = document.querySelector(".tab-content.active");
         if (
@@ -1179,6 +1606,10 @@
         saveUsers(users);
         document.getElementById("newUsername").value = "";
         document.getElementById("newPassword").value = "";
+        agregarHistorial(
+          "CREAR USUARIO",
+          `${currentUser} creó usuario ${username} (${role})`,
+        );
         showMessage(
           "usersResult",
           `✅ Usuario "${username}" creado con rol: ${role}`,
@@ -1270,6 +1701,10 @@
           delete users[username];
           saveUsers(users);
           document.getElementById("deleteUser").value = "";
+          agregarHistorial(
+            "ELIMINAR USUARIO",
+            `${currentUser} eliminó usuario ${username}`,
+          );
           showMessage(
             "usersResult",
             `✅ Usuario "${username}" eliminado`,
@@ -1505,7 +1940,7 @@
         localStorage.removeItem(STORAGE_KEY);
         localStorage.removeItem(METADATA_KEY);
         localStorage.removeItem(SEARCH_HISTORY_KEY);
-        localStorage.removeItem('productosDB_backup');
+        localStorage.removeItem("productosDB_backup");
         const productCountSpan = document.getElementById("productCount");
         const locatedCountSpan = document.getElementById("locatedCount");
         const lastUpdateSpan = document.getElementById("lastUpdate");
@@ -1524,6 +1959,10 @@
         const searchDescResult = document.getElementById("searchDescResult");
         if (searchResult) searchResult.innerHTML = "";
         if (searchDescResult) searchDescResult.innerHTML = "";
+        agregarHistorial(
+          "LIMPIAR BD",
+          `${currentUser} limpió toda la base de datos`,
+        );
         showMessage(
           "uploadResult",
           "✅ Base de datos limpiada correctamente",
@@ -1639,6 +2078,10 @@
               previewDiv.classList.remove("hidden");
             }
             checkWeeklyUpdate();
+            agregarHistorial(
+              "CARGAR INVENTARIO",
+              `${currentUser} cargó ${productosCargados} productos (${ubicados} con ubicación)`,
+            );
             showMessage(
               "uploadResult",
               `✅ Se cargaron ${productosCargados} productos (${ubicados} con ubicación)`,
@@ -1678,6 +2121,10 @@
         XLSX.writeFile(
           wb,
           `inventario_${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}.xlsx`,
+        );
+        agregarHistorial(
+          "EXPORTAR",
+          `${currentUser} exportó inventario a Excel`,
         );
         showMessage(
           "uploadResult",
@@ -1865,6 +2312,10 @@
         saveLocationToStorage(currentEditProduct.codigo, ubicacion);
         updateLocatedCount();
         updateDashboard();
+        agregarHistorial(
+          "EDITAR UBICACIÓN",
+          `${currentUser} cambió ubicación de ${currentEditProduct.codigo} a P:${ubicacion.piso || "-"} Pa:${ubicacion.pasillo || "-"} N:${ubicacion.nivel || "-"}`,
+        );
         showMessage(
           "editForm",
           `✅ Ubicación guardada para ${currentEditProduct.codigo}`,
@@ -1896,7 +2347,14 @@
 
       function switchTab(tab) {
         // Orden correcto de las pestañas según el HTML
-        const tabsList = ["search", "dashboard", "edit", "upload", "users"];
+        const tabsList = [
+          "search",
+          "dashboard",
+          "edit",
+          "upload",
+          "users",
+          "history",
+        ];
         const index = tabsList.indexOf(tab);
 
         if (index === -1) return;
@@ -1918,6 +2376,7 @@
 
         // Si es dashboard, actualizar datos
         if (tab === "dashboard") updateDashboard();
+        if (tab === "history") updateHistoryList();
       }
 
       // ============ PWA: Registrar Service Worker ============
@@ -1996,6 +2455,7 @@
         closeLoginModal();
         checkSession();
         registerServiceWorker();
+        updateHistoryList();
       }
       init();
     </script>
