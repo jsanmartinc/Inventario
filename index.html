@@ -967,6 +967,7 @@
               id="excelFile"
               accept=".xlsx, .xls, .csv"
               style="display: none"
+              onchange="loadExcelFile(this.files[0])"
             />
           </div>
           <button onclick="document.getElementById('excelFile').click()">
