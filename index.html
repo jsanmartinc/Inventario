@@ -978,6 +978,11 @@
           <button class="btn-danger" onclick="showClearDatabaseDialog()">
             🗑️ Limpiar Datos
           </button>
+          <div id="loadingOverlay" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px 30px; border-radius: 10px; z-index: 2000; text-align: center;">
+            <div style="font-size: 20px; margin-bottom: 10px;">⏳</div>
+            <div>Cargando inventario...</div>
+            <div style="font-size: 12px; margin-top: 10px;">Por favor espere</div>
+          </div>
           <div id="uploadResult"></div>
           <div id="preview" class="preview hidden"></div>
         </div>
@@ -2022,13 +2027,14 @@
       function loadExcelFile(file) {
         if (!file) return;
         if (currentUserRole !== "admin") {
-          showMessage(
-            "uploadResult",
-            "❌ Solo administrador puede cargar datos",
-            "error",
-          );
+          showMessage("uploadResult", "❌ Solo administrador puede cargar datos", "error");
           return;
         }
+        
+        // Mostrar indicador de carga
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        if (loadingOverlay) loadingOverlay.style.display = "block";
+        
         const reader = new FileReader();
         reader.onload = function (e) {
           try {
@@ -2082,20 +2088,13 @@
             }
 
             productosDB = nuevosProductos;
-            localStorage.setItem(
-              "productosDB_backup",
-              JSON.stringify(nuevosProductos),
-            );
+            localStorage.setItem("productosDB_backup", JSON.stringify(nuevosProductos));
 
-            // Guardar ubicaciones en localStorage
             const ubicacionesParaGuardar = {};
             for (let cod in nuevosProductos) {
               ubicacionesParaGuardar[cod] = nuevosProductos[cod].ubicacion;
             }
-            localStorage.setItem(
-              STORAGE_KEY,
-              JSON.stringify(ubicacionesParaGuardar),
-            );
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(ubicacionesParaGuardar));
 
             saveMetadata(currentUser);
 
@@ -2137,7 +2136,14 @@
             );
           } catch (error) {
             showMessage("uploadResult", `❌ Error: ${error.message}`, "error");
+          } finally {
+            // Ocultar indicador de carga
+            if (loadingOverlay) loadingOverlay.style.display = "none";
           }
+        };
+        reader.onerror = function() {
+          showMessage("uploadResult", "❌ Error al leer el archivo", "error");
+          if (loadingOverlay) loadingOverlay.style.display = "none";
         };
         reader.readAsArrayBuffer(file);
       }
