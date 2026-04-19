@@ -896,7 +896,7 @@
             <input
               type="text"
               id="editId"
-              placeholder="Ej: 101001, 102001P"
+              placeholder="Ej: N206089, 102001P"
               autocomplete="off"
             />
             <button onclick="loadProductForEdit()">Cargar producto</button>
@@ -1521,24 +1521,34 @@
         }
 
         const users = getUsers();
-        const user = users[username];
-
+        // Buscar usuario sin importar mayúsculas/minúsculas
+        const usernameLower = username.toLowerCase();
+        let user = null;
+        let foundUsername = null;
+        
+        for (let key in users) {
+          if (key.toLowerCase() === usernameLower) {
+            user = users[key];
+            foundUsername = key;
+            break;
+          }
+        }
+        
         if (user && user.password === password) {
-          currentUser = username;
+          currentUser = foundUsername;
           currentUserRole = user.role;
-          saveSession(username, password);
+          saveSession(foundUsername, password);
           updateUIForLoggedUser();
           closeLoginModal();
           showMessage(
             "searchResult",
-            `✅ Bienvenido ${username} (${user.role === "admin" ? "Administrador" : "Editor"})`,
+            `✅ Bienvenido ${foundUsername} (${user.role === "admin" ? "Administrador" : "Editor"})`,
             "success",
           );
         } else {
           alert("❌ Usuario o contraseña incorrectos");
         }
       }
-
       function updateUIForLoggedUser() {
         const loginBtn = document.getElementById("loginBtn");
         const logoutBtn = document.getElementById("logoutBtn");
