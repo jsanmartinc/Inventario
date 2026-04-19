@@ -1979,7 +1979,7 @@
         const stockBajo = [];
         for (let cod in productosDB) {
           const p = productosDB[cod];
-          if (p.stock > 0 && p.stock < 10) {
+          if (p.stock > 0 && p.stock <=3) {
             const u = p.ubicacion;
             stockBajo.push({
               codigo: p.codigo,
@@ -1997,7 +1997,7 @@
         
         const excelData = [
           ["CÓDIGO", "DESCRIPCIÓN", "STOCK ACTUAL", "UBICACIÓN", "SUGERENCIA"],
-          ...stockBajo.map(p => [p.codigo, p.descripcion, p.stock, p.ubicacion, p.stock < 3 ? "⚠️ REABASTECER URGENTE" : "🔄 Revisar inventario"])
+          ...stockBajo.map(p => [p.codigo, p.descripcion, p.stock, p.ubicacion, p.stock < 3 ? "⚠️ REABASTECER URGENTE" : "🔄 Revisar"])
         ];
         
         const ws = XLSX.utils.aoa_to_sheet(excelData);
