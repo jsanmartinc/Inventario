@@ -893,6 +893,12 @@
             <button onclick="searchByDescription()">Buscar</button>
           </div>
         </div>
+
+         <!-- Botón de limpieza -->
+        <button class="btn-clear" onclick="limpiarBusqueda()" style="background: #6c757d; margin-top: 10px; width: auto; padding: 10px 20px;">
+          🧹 Limpiar búsqueda
+        </button>
+
         <div id="searchResult"></div>
         <div id="searchDescResult"></div>
       </div>
@@ -2472,7 +2478,7 @@
           alert("❌ No se puede asignar NIVEL sin antes asignar un PASILLO.\n\nPrimero ingrese el PASILLO.");
           return;
         }
-        
+
         const ubicacion = {
           piso: piso,
           pasillo: pasillo,
@@ -2548,6 +2554,35 @@
         document.getElementById("editNivel").value = "";
         document.getElementById("editForm").classList.add("hidden");
         currentEditProduct = null;
+      }
+
+            function clearEditForm() {
+         // ... código existente ...
+      }
+
+      // ============ LIMPIEZA DE BÚSQUEDA ============
+      function limpiarBusqueda() {
+        // Limpiar los campos de búsqueda
+        document.getElementById("searchId").value = "";
+        document.getElementById("searchDesc").value = "";
+        
+        // Limpiar los resultados
+        document.getElementById("searchResult").innerHTML = "";
+        document.getElementById("searchDescResult").innerHTML = "";
+        
+        // Mostrar mensaje de confirmación
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "success-message";
+        msgDiv.innerHTML = "🧹 Búsqueda limpiada correctamente";
+        
+        const searchSection = document.querySelector("#tab-search");
+        const oldMsg = searchSection.querySelector(".success-message, .error-message, .warning-message");
+        if (oldMsg) oldMsg.remove();
+        searchSection.insertBefore(msgDiv, document.getElementById("searchResult"));
+        
+        setTimeout(() => {
+          if (msgDiv.parentNode) msgDiv.remove();
+        }, 3000);
       }
 
       // ============ UTILITY ============
