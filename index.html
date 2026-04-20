@@ -648,6 +648,16 @@
         }
       }
 
+      .file-input label {
+        display: block;
+        padding: 12px;
+        background: var(--badge-info-bg);
+        text-align: center;
+        border-radius: 10px;
+        border: 2px dashed #667eea;
+        color: var(--text-primary);
+      }
+
       /* ============ HISTORIAL - NUEVOS ESTILOS ============ */
       .history-filters {
         display: flex;
@@ -996,6 +1006,56 @@
           <button class="btn-danger" onclick="showClearDatabaseDialog()">
             🗑️ Limpiar Datos
           </button>
+
+                    <!-- Sección de Administración de Productos (Solo Admin) -->
+          <div id="adminProductosSection" style="margin-top: 20px; display: none; background: var(--badge-info-bg); border-radius: 10px; border: 2px dashed #667eea; padding: 15px;">
+            <h3 style="margin-top: 0; color: var(--text-primary);">👑 Administración de Productos (Solo Admin)</h3>
+            
+            <!-- Eliminar producto -->
+            <div class="edit-field">
+              <label>🗑️ Eliminar producto por CÓDIGO:</label>
+              <input type="text" id="deleteProductCode" placeholder="Ej: 101001" list="productosList" onkeypress="if(event.key === 'Enter') eliminarProducto();" />
+              <button class="btn-danger" onclick="eliminarProducto()" style="margin-top: 10px;">🗑️ Eliminar producto</button>
+            </div>
+            
+            <hr style="margin: 15px 0; border-color: var(--border-color);" />
+            
+            <!-- Crear nuevo producto -->
+            <h4 style="color: var(--text-primary);">➕ Crear nuevo producto</h4>
+            <div class="edit-field">
+              <label>📦 Código:</label>
+              <input type="text" id="newProductCode" placeholder="Ej: 999999" onkeypress="if(event.key === 'Enter') document.getElementById('newProductDesc').focus();" />
+            </div>
+            <div class="edit-field">
+              <label>📝 Descripción:</label>
+              <input type="text" id="newProductDesc" placeholder="Descripción del producto" onkeypress="if(event.key === 'Enter') document.getElementById('newProductStock').focus();" />
+            </div>
+            <div class="edit-field">
+              <label>📊 Stock:</label>
+              <input type="number" id="newProductStock" placeholder="0" value="0" onkeypress="if(event.key === 'Enter') document.getElementById('newProductPiso').focus();" />
+            </div>
+            <div class="edit-field">
+              <label>🏢 PISO:</label>
+              <input type="text" id="newProductPiso" placeholder="Ej: 1" onkeypress="if(event.key === 'Enter') document.getElementById('newProductPasillo').focus();" />
+            </div>
+            <div class="edit-field">
+              <label>📍 PASILLO:</label>
+              <input type="text" id="newProductPasillo" placeholder="Ej: A-12" onkeypress="if(event.key === 'Enter') document.getElementById('newProductNivel').focus();" />
+            </div>
+            <div class="edit-field">
+              <label>📚 NIVEL:</label>
+              <select id="newProductNivel" onkeypress="if(event.key === 'Enter') crearProducto();">
+                <option value="">Seleccionar nivel</option>
+                <option value="1">Nivel 1 (Bajo)</option>
+                <option value="2">Nivel 2 (Medio)</option>
+                <option value="3">Nivel 3 (Alto)</option>
+                <option value="4">Nivel 4 (Superior)</option>
+                <option value="Suelo">Suelo / Piso</option>
+              </select>
+            </div>
+            <button class="btn-save" onclick="crearProducto()" style="background: #28a745;">➕ Crear producto</button>
+          </div>
+
           <div id="loadingOverlay" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px 30px; border-radius: 10px; z-index: 2000; text-align: center;">
             <div style="font-size: 20px; margin-bottom: 10px;">⏳</div>
             <div>Cargando inventario...</div>
@@ -1585,6 +1645,11 @@
         const uploadUserBadge = document.getElementById("uploadUserBadge");
         const usersUserBadge = document.getElementById("usersUserBadge");
         const historyUserBadge = document.getElementById("historyUserBadge");
+        const adminSection = document.getElementById("adminProductosSection");
+
+        if (adminSection) {
+          adminSection.style.display = currentUserRole === "admin" ? "block" : "none";
+        }
 
         if (loginBtn) loginBtn.classList.add("hidden");
         if (logoutBtn) logoutBtn.classList.remove("hidden");
@@ -2583,6 +2648,138 @@
         setTimeout(() => {
           if (msgDiv.parentNode) msgDiv.remove();
         }, 3000);
+      }
+
+      // Eliminar producto (solo admin)
+      function eliminarProducto() {
+        if (currentUserRole !== "admin") {
+          alert("❌ Solo administrador puede eliminar productos");
+          return;
+        }
+        
+        const codigo = document.getElementById("deleteProductCode").value.trim().toUpperCase();
+        if (!codigo) {
+          alert("❌ Ingrese un código de producto");
+          return;
+        }
+        
+        if (!productosDB[codigo]) {
+          alert(`❌ El producto ${codigo} no existe`);
+          return;
+        }
+        
+        const specialPassword = prompt("🔐 Ingrese la CLAVE ESPECIAL para ELIMINAR este producto:\n(Esta acción es irreversible)");
+        const CLEAR_PASSWORD = "clearDB2024";
+        
+        if (specialPassword !== CLEAR_PASSWORD) {
+          if (specialPassword !== null) alert("❌ Clave especial incorrecta");
+          return;
+        }
+        
+        if (confirm(`⚠️ ¿Está seguro de eliminar el producto ${codigo} - ${productosDB[codigo].descripcion.substring(0, 40)}?`)) {
+          // Eliminar producto
+          delete productosDB[codigo];
+          
+          // Eliminar ubicación asociada
+          const ubicaciones = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+          delete ubicaciones[codigo];
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(ubicaciones));
+          
+          // Guardar cambios
+          localStorage.setItem("productosDB_backup", JSON.stringify(productosDB));
+          
+          // Actualizar todo
+          updateDashboard();
+          actualizarDatalist();
+          updateLocatedCount();
+          
+          // Limpiar campo
+          document.getElementById("deleteProductCode").value = "";
+          
+          agregarHistorial("ELIMINAR PRODUCTO", `${currentUser} eliminó producto ${codigo}`);
+          showMessage("uploadResult", `✅ Producto ${codigo} eliminado correctamente`, "success");
+        }
+      }
+
+      // Crear nuevo producto (solo admin)
+      function crearProducto() {
+        if (currentUserRole !== "admin") {
+          alert("❌ Solo administrador puede crear productos");
+          return;
+        }
+        
+        const codigo = document.getElementById("newProductCode").value.trim().toUpperCase();
+        const descripcion = document.getElementById("newProductDesc").value.trim();
+        const stock = parseInt(document.getElementById("newProductStock").value) || 0;
+        const piso = document.getElementById("newProductPiso").value.trim();
+        const pasillo = document.getElementById("newProductPasillo").value.trim();
+        const nivel = document.getElementById("newProductNivel").value;
+        
+         // VALIDACIÓN: Código y descripción son obligatorios
+        if (!codigo) {
+          alert("❌ El CÓDIGO es obligatorio");
+          return;
+        }
+        
+        if (!descripcion) {
+          alert("❌ La DESCRIPCIÓN es obligatoria");
+          return;
+        }
+        
+        if (productosDB[codigo]) {
+          alert(`❌ El producto ${codigo} ya existe`);
+          return;
+        }
+        
+        const specialPassword = prompt("🔐 Ingrese la CLAVE ESPECIAL para CREAR este producto:");
+        const CLEAR_PASSWORD = "clearDB2024";
+        
+        if (specialPassword !== CLEAR_PASSWORD) {
+          if (specialPassword !== null) alert("❌ Clave especial incorrecta");
+          return;
+        }
+        
+        // Crear nuevo producto
+        const nuevoProducto = {
+          codigo: codigo,
+          descripcion: descripcion,
+          stock: stock,
+          ubicacion: { piso, pasillo, nivel }
+        };
+        
+        productosDB[codigo] = nuevoProducto;
+        
+        // Guardar ubicación
+        const ubicaciones = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        ubicaciones[codigo] = { piso, pasillo, nivel };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(ubicaciones));
+        
+        // Guardar productos
+        localStorage.setItem("productosDB_backup", JSON.stringify(productosDB));
+        
+        // Ordenar productos alfabéticamente por código
+        const productosOrdenados = {};
+        Object.keys(productosDB).sort().forEach(key => {
+          productosOrdenados[key] = productosDB[key];
+        });
+        productosDB = productosOrdenados;
+        localStorage.setItem("productosDB_backup", JSON.stringify(productosDB));
+        
+        // Actualizar todo
+        updateDashboard();
+        actualizarDatalist();
+        updateLocatedCount();
+        
+        // Limpiar campos
+        document.getElementById("newProductCode").value = "";
+        document.getElementById("newProductDesc").value = "";
+        document.getElementById("newProductStock").value = "0";
+        document.getElementById("newProductPiso").value = "";
+        document.getElementById("newProductPasillo").value = "";
+        document.getElementById("newProductNivel").value = "";
+        
+        agregarHistorial("CREAR PRODUCTO", `${currentUser} creó producto ${codigo} - ${descripcion}`);
+        showMessage("uploadResult", `✅ Producto ${codigo} creado correctamente`, "success");
       }
 
       // ============ UTILITY ============
