@@ -2456,11 +2456,29 @@
           alert("Primero cargue un producto");
           return;
         }
+        
+        const piso = document.getElementById("editPiso").value.trim();
+        const pasillo = document.getElementById("editPasillo").value.trim();
+        const nivel = document.getElementById("editNivel").value;
+        
+        // Validación: no permitir pasillo o nivel sin piso
+        if ((pasillo !== "" || nivel !== "") && piso === "") {
+          alert("❌ No se puede asignar PASILLO o NIVEL sin antes asignar un PISO.\n\nPrimero ingrese el PISO.");
+          return;
+        }
+        
+         // Validación 2: No permitir nivel sin pasillo
+        if (nivel !== "" && pasillo === "") {
+          alert("❌ No se puede asignar NIVEL sin antes asignar un PASILLO.\n\nPrimero ingrese el PASILLO.");
+          return;
+        }
+        
         const ubicacion = {
-          piso: document.getElementById("editPiso").value.trim(),
-          pasillo: document.getElementById("editPasillo").value.trim(),
-          nivel: document.getElementById("editNivel").value,
+          piso: piso,
+          pasillo: pasillo,
+          nivel: nivel,
         };
+        
         currentEditProduct.ubicacion = ubicacion;
         saveLocationToStorage(currentEditProduct.codigo, ubicacion);
         updateLocatedCount();
@@ -2469,18 +2487,15 @@
           "EDITAR UBICACIÓN",
           `${currentUser} cambió ubicación de ${currentEditProduct.codigo} a P:${ubicacion.piso || "-"} Pa:${ubicacion.pasillo || "-"} N:${ubicacion.nivel || "-"}`,
         );
-        // Mostrar mensaje en un lugar que no se limpiará
+        
+        // Mostrar mensaje de éxito
         const msgDiv = document.createElement("div");
         msgDiv.className = "success-message";
         msgDiv.innerHTML = `✅ Ubicación guardada para ${currentEditProduct.codigo}`;
-        
-        // Usar el contenedor de edición pero fuera del área que se limpia
         const editContent = document.getElementById("editContent");
         const oldMsg = editContent.querySelector(".success-message, .error-message, .warning-message");
         if (oldMsg) oldMsg.remove();
         editContent.appendChild(msgDiv);
-        
-        // El mensaje desaparecerá después de 5 segundos
         setTimeout(() => {
           if (msgDiv.parentNode) msgDiv.remove();
         }, 5000);
@@ -2495,7 +2510,7 @@
           }, 500);
         }
 
-        // === LIMPIEZA AUTOMÁTICA DEL FORMULARIO ===
+        // Limpieza automática del formulario
         setTimeout(() => {
           document.getElementById("editId").value = "";
           document.getElementById("editPiso").value = "";
@@ -2503,8 +2518,9 @@
           document.getElementById("editNivel").value = "";
           document.getElementById("editForm").classList.add("hidden");
           currentEditProduct = null;
-        }, 100); // Limpia rápido pero el mensaje ya está fuera
+        }, 100);
       }
+
   
       function clearEditForm() {
          // Confirmar antes de limpiar
