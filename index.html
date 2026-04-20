@@ -906,7 +906,7 @@
             <input
               type="text"
               id="editId"
-              placeholder="Ej: N206089, 102001P"
+              placeholder="Ej: 101001, 102001P, N103021P"
               autocomplete="off"
               list="productosList"
             />
@@ -1900,13 +1900,18 @@
           })
           .slice(0, 10);
         const noLocationList = document.getElementById("noLocationList");
-        if (noLocationList)
-          noLocationList.innerHTML = noLocation
-            .map(
-              (p) =>
-                `<div class="product-item"><span class="product-code">${p.codigo}</span><span class="product-desc">${p.descripcion.substring(0, 40)}...</span>${currentUserRole ? `<button class="btn-small" onclick="quickEditLocation('${p.codigo}')">📍 Asignar</button>` : '<span style="font-size:10px;color:var(--text-light);">🔒 Login para editar</span>'}</div>`,
-            )
-            .join("");
+        if (noLocationList) {
+          if (noLocation.length === 0) {
+            noLocationList.innerHTML = '<div class="info-badge" style="text-align:center; margin:10px;">✅ No hay productos sin ubicación</div>';
+          } else {
+            noLocationList.innerHTML = noLocation
+              .map(
+                (p) =>
+                  `<div class="product-item"><span class="product-code">${p.codigo}</span><span class="product-desc">${p.descripcion.substring(0, 40)}...</span>${currentUserRole ? `<button class="btn-small" onclick="quickEditLocation('${p.codigo}')">📍 Asignar</button>` : '<span style="font-size:10px;color:var(--text-light);">🔒 Login para editar</span>'}</div>`,
+              )
+              .join("");
+          }
+        }
 
         const history = JSON.parse(
           localStorage.getItem(SEARCH_HISTORY_KEY) || "[]",
@@ -2003,7 +2008,7 @@
         const ws = XLSX.utils.aoa_to_sheet(excelData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Stock Bajo");
-        XLSX.writeFile(wb, `productos_stock_bajo_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        XLSX.writeFile(wb, `stock_bajo_${new Date().toISOString().slice(0, 10)}.xlsx`);
         
         agregarHistorial("EXPORTAR STOCK BAJO", `${currentUser} exportó lista de productos con stock bajo (${stockBajo.length} productos)`);
       }
