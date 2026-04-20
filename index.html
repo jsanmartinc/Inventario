@@ -1826,7 +1826,7 @@
         let count = 0;
         for (let cod in productosDB) {
           const u = productosDB[cod].ubicacion;
-          if (u && (u.piso || u.pasillo || u.nivel)) count++;
+          if (u && u.piso && u.pasillo && u.nivel) count++;
         }
         const locatedCountSpan = document.getElementById("locatedCount");
         if (locatedCountSpan) locatedCountSpan.innerText = count;
@@ -1851,7 +1851,7 @@
         for (let cod in productosDB) {
           const p = productosDB[cod];
           const u = p.ubicacion;
-          const tieneUbic = u && (u.piso || u.pasillo || u.nivel);
+          const tieneUbic = u && u.piso && u.pasillo && u.nivel;
           if (tieneUbic) conUbicacion++;
           else sinUbicacion++;
           if (p.stock === 0) zeroStock++;
@@ -1896,7 +1896,7 @@
         const noLocation = productosArray
           .filter((p) => {
             const u = p.ubicacion;
-            return !(u && (u.piso || u.pasillo || u.nivel));
+            return !(u && u.piso && u.pasillo && u.nivel);
           })
           .slice(0, 10);
         const noLocationList = document.getElementById("noLocationList");
@@ -1951,7 +1951,7 @@
         for (let cod in productosDB) {
           const p = productosDB[cod];
           const u = p.ubicacion;
-          const tieneUbic = u && (u.piso || u.pasillo || u.nivel);
+          const tieneUbic = u && u.piso && u.pasillo && u.nivel;
           if (!tieneUbic) {
             sinUbicacion.push({
               codigo: p.codigo,
@@ -1990,7 +1990,7 @@
               codigo: p.codigo,
               descripcion: p.descripcion,
               stock: p.stock,
-              ubicacion: u && (u.piso || u.pasillo || u.nivel) ? `${u.piso || "-"}/${u.pasillo || "-"}/${u.nivel || "-"}` : "Sin ubicación"
+              ubicacion: u && u.piso && u.pasillo && u.nivel ? `${u.piso}/${u.pasillo}/${u.nivel}` : "Sin ubicación"
             });
           }
         }
