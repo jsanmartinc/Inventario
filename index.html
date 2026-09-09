@@ -1504,7 +1504,7 @@
         const specialPassword = prompt(
           `🔐 Se van a borrar ${historial.length} registros.\nIngrese la CLAVE ESPECIAL para BORRAR TODO EL HISTORIAL:\n(Esta acción es irreversible)`,
         );
-        const CLEAR_PASSWORD = "clearDB2024";
+        const CLEAR_PASSWORD = "admin_clear_password_here"; // Reemplazar por clave de administración en producción
 
         if (specialPassword !== CLEAR_PASSWORD) {
           if (specialPassword !== null)
