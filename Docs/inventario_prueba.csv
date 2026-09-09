@@ -1,0 +1,11 @@
+CODIGO,DESCRIPCION,STOCK,PISO,PASILLO,NIVEL
+REP-101001,Filtro de Aceite Sintético Universal,15,1,A-01,1
+REP-101002,Kit de Pastillas de Freno Cerámicas,8,1,A-01,2
+REP-101003,Disco de Freno Ventilado Delantero,3,1,A-02,Suelo
+REP-102001,Juego de Bujías Iridium de Alto Rendimiento,25,2,B-05,3
+REP-102002,Amortiguador Hidráulico Reforzado,2,2,B-05,1
+REP-102003,Bomba de Agua con Empaquetadura,0,2,B-06,2
+REP-103001,Correa de Distribución Dentada,12,,,
+REP-103002,Sensor de Posición del Cigüeñal,1,,,
+REP-103003,Kit de Embrague Completo,5,1,A-03,Suelo
+REP-104001,Filtro de Aire de Cabina Polen,18,2,B-01,4
