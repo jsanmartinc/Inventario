@@ -884,7 +884,7 @@
             <input
               type="text"
               id="searchId"
-              placeholder="Ej: 101001, 102001P, N103021"
+              placeholder="Ej: REP-101001, REP-101002, REP-101003"
               autocomplete="off"
               list="productosList"
             />
@@ -897,7 +897,7 @@
             <input
               type="text"
               id="searchDesc"
-              placeholder="Ej: MOTOR, CULATA, ALTERNADOR"
+              placeholder="Ej: Filtro, Disco, Sensor"
               autocomplete="off"
             />
             <button onclick="searchByDescription()">Buscar</button>
@@ -922,7 +922,7 @@
             <input
               type="text"
               id="editId"
-              placeholder="Ej: 101001, 102001P, N103021P"
+              placeholder="Ej: REP-101001, REP-101002, REP-101003"
               autocomplete="off"
               list="productosList"
             />
@@ -1014,7 +1014,7 @@
             <!-- Eliminar producto -->
             <div class="edit-field">
               <label>🗑️ Eliminar producto por CÓDIGO:</label>
-              <input type="text" id="deleteProductCode" placeholder="Ej: 101001" list="productosList" onkeypress="if(event.key === 'Enter') eliminarProducto();" />
+              <input type="text" id="deleteProductCode" placeholder="Ej: REP-101001" list="productosList" onkeypress="if(event.key === 'Enter') eliminarProducto();" />
               <button class="btn-danger" onclick="eliminarProducto()" style="margin-top: 10px;">🗑️ Eliminar producto</button>
             </div>
             
@@ -1239,10 +1239,13 @@
 
       const DEFAULT_ADMIN = {
         username: "admin",
-        password: "admin_secure_password_here", // Usar contraseña segura en producción
+        password: "change_me_in_production", // Cambiar por hash o clave segura al desplegar
         role: "admin",
         createdAt: new Date().toISOString(),
       };
+
+      // Clave especial de confirmación para acciones críticas
+      const ADMIN_CLEAR_PASSWORD = "change_me_in_production";
 
       // ============ VARIABLES GLOBALES ============
       let productosDB = {};
@@ -1504,7 +1507,7 @@
         const specialPassword = prompt(
           `🔐 Se van a borrar ${historial.length} registros.\nIngrese la CLAVE ESPECIAL para BORRAR TODO EL HISTORIAL:\n(Esta acción es irreversible)`,
         );
-        const CLEAR_PASSWORD = "admin_clear_password_here"; // Reemplazar por clave de administración en producción
+        const CLEAR_PASSWORD = ADMIN_CLEAR_PASSWORD; // Reemplazar por clave de administración en producción
 
         if (specialPassword !== CLEAR_PASSWORD) {
           if (specialPassword !== null)
@@ -2137,7 +2140,7 @@
         const specialPassword = prompt(
           "🔐 Ingrese la CLAVE ESPECIAL para LIMPIAR la base de datos:\n(Esta acción es irreversible)",
         );
-        const CLEAR_PASSWORD = "clearDB2024";
+        const CLEAR_PASSWORD = ADMIN_CLEAR_PASSWORD; // Reemplazar por clave de administración en producción
         if (specialPassword !== CLEAR_PASSWORD) {
           if (specialPassword !== null)
             showMessage(
@@ -2669,7 +2672,7 @@
         }
         
         const specialPassword = prompt("🔐 Ingrese la CLAVE ESPECIAL para ELIMINAR este producto:\n(Esta acción es irreversible)");
-        const CLEAR_PASSWORD = "clearDB2024";
+        const CLEAR_PASSWORD = ADMIN_CLEAR_PASSWORD; // Reemplazar por clave de administración en producción
         
         if (specialPassword !== CLEAR_PASSWORD) {
           if (specialPassword !== null) alert("❌ Clave especial incorrecta");
@@ -2732,7 +2735,7 @@
         }
         
         const specialPassword = prompt("🔐 Ingrese la CLAVE ESPECIAL para CREAR este producto:");
-        const CLEAR_PASSWORD = "clearDB2024";
+        const CLEAR_PASSWORD = ADMIN_CLEAR_PASSWORD; // Reemplazar por clave de administración en producción
         
         if (specialPassword !== CLEAR_PASSWORD) {
           if (specialPassword !== null) alert("❌ Clave especial incorrecta");
